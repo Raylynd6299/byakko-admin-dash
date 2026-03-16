@@ -1,0 +1,117 @@
+/* ─── Design Tokens ─────────────────────────────────────────────────────────
+   Byakko Admin — Terminal Elegante
+   Elevation by color shift (no shadows). Single accent. Monospace for data.
+   ────────────────────────────────────────────────────────────────────────── */
+
+/* ─── Dark Theme (default) ──────────────────────────────────────────────── */
+:root,
+.dark {
+  /* Canvas — deepest layer */
+  --canvas:          #080d17;
+
+  /* Surfaces — elevation by lightness */
+  --surface-0:       #080d17;   /* page background */
+  --surface-1:       #0d1424;   /* sidebar, panels */
+  --surface-2:       #111b2e;   /* cards, containers */
+  --surface-3:       #172035;   /* raised cards, dropdowns */
+  --surface-4:       #1e2a42;   /* hover states, active inputs */
+
+  /* Text hierarchy */
+  --text-primary:    #e8edf5;   /* headings, important labels */
+  --text-secondary:  #7d92b0;   /* body, descriptions */
+  --text-muted:      #3f5272;   /* placeholders, disabled */
+  --text-inverse:    #080d17;   /* text on colored buttons */
+
+  /* Borders — whisper quiet */
+  --border-subtle:   rgba(148, 163, 184, 0.07);
+  --border-default:  rgba(148, 163, 184, 0.12);
+  --border-strong:   rgba(148, 163, 184, 0.22);
+  --border-focus:    #3b82f6;
+
+  /* Accent — electric blue, single accent */
+  --accent:          #3b82f6;
+  --accent-hover:    #60a5fa;
+  --accent-muted:    rgba(59, 130, 246, 0.12);
+  --accent-fg:       #ffffff;
+
+  /* Semantic */
+  --success:         #10b981;
+  --success-bg:      rgba(16, 185, 129, 0.10);
+  --success-fg:      #34d399;
+
+  --warning:         #f59e0b;
+  --warning-bg:      rgba(245, 158, 11, 0.10);
+  --warning-fg:      #fbbf24;
+
+  --danger:          #ef4444;
+  --danger-bg:       rgba(239, 68, 68, 0.10);
+  --danger-fg:       #f87171;
+
+  /* Controls */
+  --input-bg:        #0d1424;
+  --input-border:    rgba(148, 163, 184, 0.15);
+  --input-focus-bg:  #111b2e;
+
+  /* Sidebar */
+  --sidebar-width:   240px;
+  --sidebar-bg:      #0d1424;
+  --sidebar-border:  rgba(148, 163, 184, 0.08);
+  --nav-active-bg:   rgba(59, 130, 246, 0.10);
+  --nav-active-fg:   #60a5fa;
+  --nav-hover-bg:    rgba(148, 163, 184, 0.05);
+
+  /* Misc */
+  --radius-sm:       4px;
+  --radius-md:       8px;
+  --radius-lg:       12px;
+  --radius-full:     9999px;
+}
+
+/* ─── Light Theme ────────────────────────────────────────────────────────── */
+.light {
+  --canvas:          #f4f6fa;
+
+  --surface-0:       #f4f6fa;
+  --surface-1:       #ffffff;
+  --surface-2:       #f8fafc;
+  --surface-3:       #f1f5f9;
+  --surface-4:       #e8edf5;
+
+  --text-primary:    #0d1424;
+  --text-secondary:  #475569;
+  --text-muted:      #94a3b8;
+  --text-inverse:    #ffffff;
+
+  --border-subtle:   rgba(15, 23, 42, 0.05);
+  --border-default:  rgba(15, 23, 42, 0.09);
+  --border-strong:   rgba(15, 23, 42, 0.16);
+  --border-focus:    #3b82f6;
+
+  --accent:          #2563eb;
+  --accent-hover:    #1d4ed8;
+  --accent-muted:    rgba(37, 99, 235, 0.08);
+  --accent-fg:       #ffffff;
+
+  --success:         #059669;
+  --success-bg:      rgba(5, 150, 105, 0.08);
+  --success-fg:      #047857;
+
+  --warning:         #d97706;
+  --warning-bg:      rgba(217, 119, 6, 0.08);
+  --warning-fg:      #b45309;
+
+  --danger:          #dc2626;
+  --danger-bg:       rgba(220, 38, 38, 0.08);
+  --danger-fg:       #b91c1c;
+
+  --input-bg:        #ffffff;
+  --input-border:    rgba(15, 23, 42, 0.12);
+  --input-focus-bg:  #f8fafc;
+
+  --sidebar-width:   240px;
+  --sidebar-bg:      #ffffff;
+  --sidebar-border:  rgba(15, 23, 42, 0.07);
+  --nav-active-bg:   rgba(37, 99, 235, 0.07);
+  --nav-active-fg:   #2563eb;
+  --nav-hover-bg:    rgba(15, 23, 42, 0.04);
+}
