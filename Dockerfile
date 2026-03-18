@@ -1,7 +1,7 @@
 # Multi-stage build para optimizar el tamaño de la imagen
 
 # Stage 1: Build
-FROM oven/bun:1.1.34 AS builder
+FROM oven/bun:1.3.10 AS builder
 
 # Establecer directorio de trabajo
 WORKDIR /app
