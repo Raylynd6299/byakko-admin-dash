@@ -1,9 +1,11 @@
-import { ReactElement, useEffect, useMemo } from "react";
+import { type ReactElement, useEffect, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Select, type SelectOption } from "@/components/ui/select";
 import { createCategorySchema, type CreateCategoryFormValues } from "@/schemas/category.schema";
 import type { Client } from "@/types/client.types";
 import type { Category } from "@/types/category.types";
@@ -19,7 +21,7 @@ interface CategoryFormProps {
   isLoading?: boolean;
 }
 
-// ─── Client Select ─────────────────────────────────────────────────────────────
+// ─── Select wrappers ────────────────────────────────────────────────────────
 
 interface ClientSelectProps {
   clients:    Client[];
@@ -30,34 +32,28 @@ interface ClientSelectProps {
 }
 
 function ClientSelect({ clients, value, onChange, error, disabled }: ClientSelectProps): ReactElement {
+  const { t } = useTranslation();
+
+  const options: SelectOption<string>[] = [
+    { value: "", label: t("categories.create.selectClient") },
+    ...clients.map((c) => ({ value: c.id, label: c.name })),
+  ];
+
   return (
     <div className="flex flex-col gap-1.5">
-      <label
-        htmlFor="clientId"
-        className="text-xs font-medium"
-        style={{ color: "var(--text-secondary)" }}
-      >
-        Client
+      <label className="text-xs font-medium" style={{ color: "var(--text-secondary)" }}>
+        {t("clients.client")}
       </label>
-      <select
-        id="clientId"
-        value={value}
-        onChange={(e): void => onChange(e.target.value)}
-        disabled={disabled}
-        className="w-full rounded-md border px-3 py-2 text-sm outline-none transition-colors duration-150 focus:border-[var(--border-focus)]"
-        style={{
-          backgroundColor: error ? "var(--danger-bg)" : "var(--input-bg)",
-          borderColor:     error ? "var(--danger)" : "var(--input-border)",
-          color:           "var(--text-primary)",
-        }}
-      >
-        <option value="">Select a client…</option>
-        {clients.map((c) => (
-          <option key={c.id} value={c.id}>
-            {c.name}
-          </option>
-        ))}
-      </select>
+      <div style={error ? { backgroundColor: "var(--danger-bg)" } : undefined}>
+        <Select
+          value={value}
+          options={options}
+          onChange={onChange}
+          disabled={disabled}
+          aria-label={t("clients.client")}
+          buttonClassName={error ? "border-[var(--danger)]" : undefined}
+        />
+      </div>
       {error && (
         <p className="text-xs" style={{ color: "var(--danger-fg)" }}>
           {error}
@@ -78,42 +74,33 @@ interface ParentSelectProps {
 }
 
 function ParentSelect({ categories, clientId, value, onChange, disabled }: ParentSelectProps): ReactElement {
-  // Filter categories by client and group by parent
+  const { t } = useTranslation();
+
+  // Filter categories by client
   const eligibleCategories = useMemo(() => {
     if (!clientId) return [];
     return categories.filter((c) => c.clientId === clientId);
   }, [categories, clientId]);
 
+  const options: SelectOption<string>[] = [
+    { value: "", label: t("categories.create.none") },
+    ...eligibleCategories.map((c) => ({ value: c.id, label: `${c.path} — ${c.name}` })),
+  ];
+
   return (
     <div className="flex flex-col gap-1.5">
-      <label
-        htmlFor="parentId"
-        className="text-xs font-medium"
-        style={{ color: "var(--text-secondary)" }}
-      >
-        Parent Category
+      <label className="text-xs font-medium" style={{ color: "var(--text-secondary)" }}>
+        {t("categories.create.parent")}
       </label>
-      <select
-        id="parentId"
+      <Select
         value={value}
-        onChange={(e): void => onChange(e.target.value || undefined)}
+        options={options}
+        onChange={onChange}
         disabled={disabled || !clientId}
-        className="w-full rounded-md border px-3 py-2 text-sm outline-none transition-colors duration-150 focus:border-[var(--border-focus)]"
-        style={{
-          backgroundColor: "var(--input-bg)",
-          borderColor:     "var(--input-border)",
-          color:           "var(--text-primary)",
-        }}
-      >
-        <option value="">None (root category)</option>
-        {eligibleCategories.map((c) => (
-          <option key={c.id} value={c.id}>
-            {c.path} — {c.name}
-          </option>
-        ))}
-      </select>
+        aria-label={t("categories.create.parent")}
+      />
       <p className="text-xs" style={{ color: "var(--text-muted)" }}>
-        Optional. Create as a root category if not selected.
+        {t("categories.create.parentHint")}
       </p>
     </div>
   );
@@ -129,6 +116,8 @@ export function CategoryForm({
   onSubmit,
   isLoading = false,
 }: CategoryFormProps): ReactElement {
+  const { t } = useTranslation();
+
   const {
     register,
     handleSubmit,
@@ -161,8 +150,8 @@ export function CategoryForm({
     <Dialog
       open={open}
       onClose={onClose}
-      title="New Category"
-      description="Create a new permission category for a client."
+      title={t("categories.create.title")}
+      description={t("categories.create.description")}
       footer={
         <>
           <Button
@@ -171,7 +160,7 @@ export function CategoryForm({
             onClick={onClose}
             disabled={isLoading}
           >
-            Cancel
+            {t("common.cancel")}
           </Button>
           <Button
             type="submit"
@@ -179,7 +168,7 @@ export function CategoryForm({
             size="sm"
             isLoading={isLoading}
           >
-            Create Category
+            {t("categories.create.createButton")}
           </Button>
         </>
       }
@@ -198,7 +187,7 @@ export function CategoryForm({
         />
 
         <Input
-          label="Name"
+          label={t("categories.name")}
           placeholder="Resource Management"
           error={errors.name?.message}
           disabled={isLoading}
@@ -206,9 +195,9 @@ export function CategoryForm({
         />
 
         <Input
-          label="Slug"
+          label={t("categories.slug")}
           placeholder="resource-management"
-          hint="Lowercase alphanumeric with dashes"
+          hint={t("categories.create.title")}
           error={errors.slug?.message}
           disabled={isLoading}
           {...register("slug")}

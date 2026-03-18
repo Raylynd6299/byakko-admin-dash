@@ -1,4 +1,4 @@
-import { ReactElement } from "react";
+import { type ReactElement } from "react";
 import { PageHeader } from "@/components/common/page-header";
 import { Dashboard } from "@/components/dashboard";
 

@@ -1,27 +1,16 @@
-import { ReactElement } from "react";
+import { type ReactElement } from "react";
 import { useLocation } from "react-router";
+import { useTranslation } from "react-i18next";
 import { ThemeToggle } from "./components/theme-toggle";
+import { LanguageSelector } from "@/components/common/language-selector";
 import { useAuthStore } from "@/stores/auth.store";
-
-const ROUTE_LABELS: Record<string, string> = {
-  "/":                     "Dashboard",
-  "/clients":              "Clients",
-  "/users":                "Users",
-  "/categories":           "Categories",
-  "/permissions":          "Permissions",
-  "/relation-conditions":  "Relation Conditions",
-};
-
-function resolveLabel(pathname: string): string {
-  if (ROUTE_LABELS[pathname]) return ROUTE_LABELS[pathname];
-  const base = "/" + pathname.split("/")[1];
-  return ROUTE_LABELS[base] ?? "Admin";
-}
+import { resolveLabel } from "./utils";
 
 export function TopBar(): ReactElement {
+  const { t } = useTranslation();
   const location = useLocation();
   const email = useAuthStore((state) => state.profile?.email);
-  const label = resolveLabel(location.pathname);
+  const label = resolveLabel(location.pathname, t);
 
   return (
     <header
@@ -37,6 +26,7 @@ export function TopBar(): ReactElement {
 
       {/* Right controls */}
       <div className="flex items-center gap-1">
+        <LanguageSelector />
         <ThemeToggle />
 
         {email && (

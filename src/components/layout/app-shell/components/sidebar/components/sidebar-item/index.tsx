@@ -1,4 +1,4 @@
-import { ReactElement } from "react";
+import { type ReactElement } from "react";
 import type { LucideIcon } from "lucide-react";
 import { NavLink } from "react-router";
 import { cn } from "@/lib/cn";

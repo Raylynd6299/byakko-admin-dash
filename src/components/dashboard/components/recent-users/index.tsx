@@ -1,48 +1,11 @@
-import { ReactElement } from "react";
+import { type ReactElement } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import { Users } from "lucide-react";
-import { DataTable, type Column } from "@/components/common/data-table";
-import { StatusBadge } from "@/components/common/status-badge";
+import { DataTable } from "@/components/common/data-table";
 import { ROUTES } from "@/router/routes";
+import { useColumns } from "./hooks/useColumns";
 import type { User } from "@/types/user.types";
-
-// ─── Column definitions ───────────────────────────────────────────────────────
-
-const columns: Column<User>[] = [
-  {
-    key:    "email",
-    header: "User",
-    render: (u: User): ReactElement => (
-      <div className="flex flex-col gap-0.5">
-        <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
-          {u.firstName || u.lastName
-            ? `${u.firstName} ${u.lastName}`.trim()
-            : <span style={{ color: "var(--text-muted)" }}>—</span>
-          }
-        </span>
-        <span className="text-xs" style={{ color: "var(--text-muted)" }}>
-          {u.email}
-        </span>
-      </div>
-    ),
-  },
-  {
-    key:    "clientId",
-    header: "Client ID",
-    mono:   true,
-    render: (u: User): ReactElement => (
-      <span style={{ color: "var(--text-muted)" }}>
-        {u.clientId.slice(0, 8)}…
-      </span>
-    ),
-  },
-  {
-    key:    "status",
-    header: "Status",
-    align:  "right",
-    render: (u: User): ReactElement => <StatusBadge status={u.status} />,
-  },
-];
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 
@@ -61,7 +24,9 @@ export function RecentUsers({
   isError,
   onRetry,
 }: RecentUsersProps): ReactElement {
+  const { t } = useTranslation();
   const navigate = useNavigate();
+  const columns = useColumns();
 
   const recent = users.slice(0, 5);
 
@@ -69,14 +34,14 @@ export function RecentUsers({
     <section className="flex flex-col gap-3">
       <div className="flex items-center justify-between">
         <h2 className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
-          Recent Users
+          {t("dashboard.recentUsers")}
         </h2>
         <button
           onClick={(): void => { navigate(ROUTES.USERS); }}
           className="text-xs transition-colors duration-150 hover:underline"
           style={{ color: "var(--accent)" }}
         >
-          View all →
+          {t("dashboard.viewAll")}
         </button>
       </div>
 
@@ -88,8 +53,8 @@ export function RecentUsers({
         isError={isError}
         onRetry={onRetry}
         emptyIcon={Users}
-        emptyTitle="No users yet"
-        emptyMessage="Users will appear here once clients are created."
+        emptyTitle={t("dashboard.noUsers")}
+        emptyMessage={t("dashboard.usersWillAppear")}
       />
     </section>
   );

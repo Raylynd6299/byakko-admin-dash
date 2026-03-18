@@ -1,4 +1,5 @@
-import { ReactElement, useState } from "react";
+import { type ReactElement, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Copy, Check, ShieldAlert } from "lucide-react";
 import { Dialog } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -20,6 +21,7 @@ export function ClientApiKeyDialog({
   clientName,
   apiKey,
 }: ClientApiKeyDialogProps): ReactElement {
+  const { t } = useTranslation();
   const [copied, setCopied] = useState<boolean>(false);
 
   const handleCopy = (): void => {
@@ -33,12 +35,12 @@ export function ClientApiKeyDialog({
     <Dialog
       open={open}
       onClose={onClose}
-      title="Client Created"
-      description={`API key for "${clientName}"`}
+      title={t("clients.create.success")}
+      description={t("clients.create.apiKeyFor", { name: clientName })}
       size="md"
       footer={
         <Button size="sm" onClick={onClose}>
-          Done
+          {t("common.save")}
         </Button>
       }
     >
@@ -57,8 +59,7 @@ export function ClientApiKeyDialog({
             style={{ color: "var(--warning-fg)" }}
           />
           <p className="text-xs leading-relaxed" style={{ color: "var(--warning-fg)" }}>
-            <strong>Copy this key now.</strong> For security reasons, it will not be shown again.
-            Store it in a safe place — you will need to regenerate it if lost.
+            {t("clients.create.copyWarning")}
           </p>
         </div>
 
@@ -80,7 +81,7 @@ export function ClientApiKeyDialog({
             onClick={handleCopy}
             className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md transition-colors duration-150 hover:bg-[var(--surface-3)]"
             style={{ color: copied ? "var(--success-fg)" : "var(--text-muted)" }}
-            aria-label="Copy API key"
+            aria-label={t("clients.create.copyApiKey")}
           >
             {copied ? (
               <Check size={14} strokeWidth={2} />

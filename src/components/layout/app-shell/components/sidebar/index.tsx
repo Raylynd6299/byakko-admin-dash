@@ -1,4 +1,5 @@
-import { ReactElement } from "react";
+import { type ReactElement } from "react";
+import { useTranslation } from "react-i18next";
 import {
   LayoutDashboard,
   Building2,
@@ -20,17 +21,18 @@ interface SidebarProps {
   onToggle: () => void;
 }
 
-const NAV_ITEMS = [
-  { to: ROUTES.DASHBOARD,           icon: LayoutDashboard, label: "Dashboard" },
-  { to: ROUTES.CLIENTS,             icon: Building2,       label: "Clients" },
-  { to: ROUTES.USERS,               icon: Users,           label: "Users" },
-  { to: ROUTES.CATEGORIES,          icon: Tag,             label: "Categories" },
-  { to: ROUTES.PERMISSIONS,         icon: ShieldCheck,     label: "Permissions" },
-  { to: ROUTES.RELATION_CONDITIONS, icon: GitBranch,       label: "Rel. Conditions" },
-] as const;
-
 export function Sidebar({ collapsed, onToggle }: SidebarProps): ReactElement {
+  const { t } = useTranslation();
   const logout = useAuthStore((state) => state.logout);
+
+  const NAV_ITEMS = [
+    { to: ROUTES.DASHBOARD,           icon: LayoutDashboard, label: t("nav.dashboard") },
+    { to: ROUTES.CLIENTS,             icon: Building2,       label: t("nav.clients") },
+    { to: ROUTES.USERS,               icon: Users,           label: t("nav.users") },
+    { to: ROUTES.CATEGORIES,          icon: Tag,             label: t("nav.categories") },
+    { to: ROUTES.PERMISSIONS,        icon: ShieldCheck,     label: t("nav.permissions") },
+    { to: ROUTES.RELATION_CONDITIONS, icon: GitBranch,       label: t("nav.relationConditions") },
+  ] as const;
 
   return (
     <aside
@@ -73,7 +75,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps): ReactElement {
 
         <button
           onClick={onToggle}
-          title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          title={collapsed ? t("nav.expandSidebar") : t("nav.collapseSidebar")}
           className={cn(
             "flex h-7 w-7 items-center justify-center rounded-md transition-colors duration-150",
             "hover:bg-[var(--nav-hover-bg)]"
@@ -107,7 +109,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps): ReactElement {
       >
         <button
           onClick={logout}
-          title="Log out"
+          title={t("nav.logout")}
           className={cn(
             "flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors duration-150",
             "text-[var(--text-muted)] hover:bg-[var(--danger-bg)] hover:text-[var(--danger-fg)]",
@@ -115,7 +117,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps): ReactElement {
           )}
         >
           <LogOut size={16} strokeWidth={1.5} className="shrink-0" />
-          {!collapsed && <span className="truncate">Log out</span>}
+          {!collapsed && <span className="truncate">{t("nav.logout")}</span>}
         </button>
       </div>
     </aside>

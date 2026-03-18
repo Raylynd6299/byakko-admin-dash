@@ -1,4 +1,5 @@
-import { ReactElement } from "react";
+import { type ReactElement } from "react";
+import { useTranslation } from "react-i18next";
 import { AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -9,10 +10,12 @@ interface ErrorStateProps {
 }
 
 export function ErrorState({
-  title   = "Something went wrong",
-  message = "Failed to load data. Please try again.",
+  title,
+  message,
   onRetry,
 }: ErrorStateProps): ReactElement {
+  const { t } = useTranslation();
+
   return (
     <div className="flex flex-col items-center justify-center py-16 text-center">
       <div
@@ -22,15 +25,15 @@ export function ErrorState({
         <AlertTriangle size={22} strokeWidth={1.5} style={{ color: "var(--danger-fg)" }} />
       </div>
       <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
-        {title}
+        {title ?? t("errorState.title")}
       </p>
       <p className="mt-1 text-xs" style={{ color: "var(--text-muted)" }}>
-        {message}
+        {message ?? t("errorState.description")}
       </p>
       {onRetry && (
         <div className="mt-4">
           <Button variant="outline" size="sm" onClick={onRetry}>
-            Try again
+            {t("errorState.tryAgain")}
           </Button>
         </div>
       )}

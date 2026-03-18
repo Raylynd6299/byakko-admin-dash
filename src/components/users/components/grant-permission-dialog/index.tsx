@@ -1,14 +1,14 @@
-import { ReactElement, useState, useEffect } from "react";
+import { type ReactElement, useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Dialog } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Select, type SelectOption } from "@/components/ui/select";
 import { usePermissions } from "@/hooks/queries/usePermissions";
 import { useGrantPermission } from "@/hooks/mutations/useUserMutations";
 import { grantPermissionSchema, type GrantPermissionFormValues } from "@/schemas/user.schema";
-import type { User, UserPermission } from "@/types/user.types";
-import type { Permission } from "@/types/permission.types";
+import type { User } from "@/types/user.types";
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 
@@ -19,20 +19,6 @@ interface GrantPermissionDialogProps {
   grantedKeys: Set<string>; // permissionIds already granted
 }
 
-// ─── Permission Option ─────────────────────────────────────────────────────────
-
-function PermissionOption({ perm, disabled }: { perm: Permission; disabled: boolean }): ReactElement {
-  return (
-    <option
-      key={perm.id}
-      value={perm.id}
-      disabled={disabled}
-    >
-      {perm.action} {perm.description ? `— ${perm.description}` : ""}
-    </option>
-  );
-}
-
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export function GrantPermissionDialog({
@@ -41,6 +27,7 @@ export function GrantPermissionDialog({
   user,
   grantedKeys,
 }: GrantPermissionDialogProps): ReactElement {
+  const { t } = useTranslation();
   const [selectedId, setSelectedId] = useState<string>("");
 
   const { data: allPermissions = [], isLoading } = usePermissions();
@@ -55,11 +42,7 @@ export function GrantPermissionDialog({
     if (open) setSelectedId("");
   }, [open]);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<GrantPermissionFormValues>({
+  const { register, handleSubmit } = useForm<GrantPermissionFormValues>({
     resolver: zodResolver(grantPermissionSchema),
   });
 
@@ -77,16 +60,23 @@ export function GrantPermissionDialog({
     );
   };
 
-  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>): void => {
-    setSelectedId(e.target.value);
-  };
+  // Build select options - only show non-granted permissions
+  const availablePermissions = permissions.filter((p) => !grantedKeys.has(p.id));
+
+  const permissionOptions: SelectOption<string>[] = [
+    { value: "", label: t("users.detail.selectPermission") },
+    ...availablePermissions.map((p) => ({
+      value: p.id,
+      label: p.description ? `${p.action} — ${p.description}` : p.action,
+    })),
+  ];
 
   return (
     <Dialog
       open={open}
       onClose={onClose}
-      title="Grant Permission"
-      description={`Grant a permission to ${user.email}`}
+      title={t("users.detail.grantPermissionTitle")}
+      description={t("users.detail.grantPermissionDescription", { email: user.email })}
       footer={
         <>
           <Button
@@ -95,7 +85,7 @@ export function GrantPermissionDialog({
             onClick={onClose}
             disabled={grantMutation.isPending}
           >
-            Cancel
+            {t("common.cancel")}
           </Button>
           <Button
             type="submit"
@@ -104,7 +94,7 @@ export function GrantPermissionDialog({
             isLoading={grantMutation.isPending}
             disabled={!selectedId}
           >
-            Grant
+            {t("users.detail.grantButton")}
           </Button>
         </>
       }
@@ -115,43 +105,19 @@ export function GrantPermissionDialog({
         className="flex flex-col gap-4"
       >
         <div className="flex flex-col gap-1.5">
-          <label
-            htmlFor="permissionId"
-            className="text-xs font-medium"
-            style={{ color: "var(--text-secondary)" }}
-          >
-            Permission
+          <label className="text-xs font-medium" style={{ color: "var(--text-secondary)" }}>
+            {t("users.detail.permission")}
           </label>
-          <select
-            id="permissionId"
+          <Select
             value={selectedId}
-            onChange={handleSelectChange}
+            options={permissionOptions}
+            onChange={setSelectedId}
             disabled={isLoading || grantMutation.isPending}
-            className="w-full rounded-md border px-3 py-2 text-sm outline-none transition-colors duration-150 focus:border-[var(--border-focus)]"
-            style={{
-              backgroundColor: errors.permissionId ? "var(--danger-bg)" : "var(--input-bg)",
-              borderColor:     errors.permissionId ? "var(--danger)" : "var(--input-border)",
-              color:           "var(--text-primary)",
-            }}
-            {...register("permissionId")}
-          >
-            <option value="">Select a permission…</option>
-            {permissions.map((p) => (
-              <PermissionOption
-                key={p.id}
-                perm={p}
-                disabled={grantedKeys.has(p.id)}
-              />
-            ))}
-          </select>
-          {errors.permissionId && (
-            <p className="text-xs" style={{ color: "var(--danger-fg)" }}>
-              {errors.permissionId.message}
-            </p>
-          )}
+            aria-label={t("users.detail.permission")}
+          />
           {permissions.some((p) => grantedKeys.has(p.id)) && (
             <p className="text-xs" style={{ color: "var(--text-muted)" }}>
-              Grayed-out permissions are already granted.
+              {t("users.detail.alreadyGranted")}
             </p>
           )}
         </div>
@@ -170,7 +136,7 @@ export function GrantPermissionDialog({
             className="text-xs"
             style={{ color: "var(--text-secondary)" }}
           >
-            Granted via API (not by a user)
+            {t("users.detail.grantedViaApi")}
           </label>
         </div>
       </form>

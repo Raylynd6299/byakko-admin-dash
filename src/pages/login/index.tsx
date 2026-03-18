@@ -1,20 +1,23 @@
-import { ReactElement, useState } from "react";
+import { type ReactElement, useState } from "react";
 import { useNavigate } from "react-router";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslation } from "react-i18next";
 import { Eye, EyeOff, Lock, Mail, ShieldCheck } from "lucide-react";
 import { z } from "zod";
 import { cn } from "@/lib/cn";
 import { ROUTES } from "@/router/routes";
 import { useAuthStore } from "@/stores/auth.store";
 import { httpClient } from "@/services/http-client";
+import { ThemeToggle } from "@/components/layout/app-shell/components/top-bar/components/theme-toggle";
+import { LanguageSelector } from "@/components/common/language-selector";
 import type { AdminTokens, AdminProfile } from "@/types/auth.types";
 
 // ─── Schema ───────────────────────────────────────────────────────────────────
 
 const loginSchema = z.object({
-  email:    z.email({ error: "Enter a valid email address" }),
-  password: z.string().min(1, { error: "Password is required" }),
+  email:    z.email({ error: "login.emailError" }),
+  password: z.string().min(1, { error: "login.passwordError" }),
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;
@@ -51,6 +54,7 @@ async function loginRequest(
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export function LoginPage(): ReactElement {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const login    = useAuthStore((state) => state.login);
 
@@ -70,7 +74,7 @@ export function LoginPage(): ReactElement {
       login(tokens, profile);
       navigate(ROUTES.DASHBOARD, { replace: true });
     } catch {
-      setServerError("Invalid credentials. Check your email and password.");
+      setServerError(t("login.error"));
     }
   };
 
@@ -88,6 +92,11 @@ export function LoginPage(): ReactElement {
           backgroundSize: "32px 32px",
         }}
       />
+
+      {/* Language selector — top right */}
+      <div className="fixed top-4 right-4">
+        <LanguageSelector />
+      </div>
 
       {/* Card */}
       <div className="relative w-full max-w-sm animate-in">
@@ -122,10 +131,10 @@ export function LoginPage(): ReactElement {
                 className="text-lg font-semibold tracking-tight"
                 style={{ color: "var(--text-primary)" }}
               >
-                Byakko Admin
+                {t("login.title")}
               </h1>
               <p className="mt-0.5 text-xs" style={{ color: "var(--text-muted)" }}>
-                Restricted access — authorized personnel only
+                {t("login.subtitle")}
               </p>
             </div>
           </div>
@@ -140,7 +149,7 @@ export function LoginPage(): ReactElement {
                 className="text-xs font-medium"
                 style={{ color: "var(--text-secondary)" }}
               >
-                Email
+                {t("login.email")}
               </label>
               <div className="relative">
                 <Mail
@@ -168,7 +177,7 @@ export function LoginPage(): ReactElement {
               </div>
               {errors.email && (
                 <p className="text-xs" style={{ color: "var(--danger-fg)" }}>
-                  {errors.email.message}
+                  {t(errors.email.message || "login.emailError")}
                 </p>
               )}
             </div>
@@ -180,7 +189,7 @@ export function LoginPage(): ReactElement {
                 className="text-xs font-medium"
                 style={{ color: "var(--text-secondary)" }}
               >
-                Password
+                {t("login.password")}
               </label>
               <div className="relative">
                 <Lock
@@ -220,7 +229,7 @@ export function LoginPage(): ReactElement {
               </div>
               {errors.password && (
                 <p className="text-xs" style={{ color: "var(--danger-fg)" }}>
-                  {errors.password.message}
+                  {t(errors.password.message || "login.passwordError")}
                 </p>
               )}
             </div>
@@ -266,10 +275,10 @@ export function LoginPage(): ReactElement {
                   >
                     <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
                   </svg>
-                  Signing in…
+                  {t("login.submitting")}
                 </span>
               ) : (
-                "Sign in"
+                t("login.submit")
               )}
             </button>
           </form>
@@ -277,8 +286,13 @@ export function LoginPage(): ReactElement {
 
         {/* Footer note */}
         <p className="mt-4 text-center text-xs" style={{ color: "var(--text-muted)" }}>
-          Byakko API Admin Panel
+          {t("login.footer")}
         </p>
+      </div>
+
+      {/* Theme toggle — bottom right */}
+      <div className="fixed bottom-4 right-4">
+        <ThemeToggle />
       </div>
     </div>
   );

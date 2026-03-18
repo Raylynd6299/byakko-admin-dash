@@ -1,4 +1,4 @@
-import { ReactElement } from "react";
+import { type ReactElement } from "react";
 import { PermissionList } from "@/components/permissions";
 
 export function PermissionsPage(): ReactElement {

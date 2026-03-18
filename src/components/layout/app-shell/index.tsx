@@ -1,4 +1,4 @@
-import { ReactElement, useState } from "react";
+import { type ReactElement, useState } from "react";
 import { Outlet } from "react-router";
 import { Sidebar } from "./components/sidebar";
 import { TopBar } from "./components/top-bar";

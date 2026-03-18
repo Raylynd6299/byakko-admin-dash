@@ -1,0 +1,250 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "search": "Search",
+    "loading": "Loading...",
+    "noResults": "No results",
+    "nothingHere": "Nothing here yet.",
+    "tryAgain": "Try again",
+    "all": "All",
+    "allClients": "All clients",
+    "allStatuses": "All statuses",
+    "notConfigured": "Not configured",
+    "notSet": "Not set",
+    "back": "Back"
+  },
+  "login": {
+    "title": "Byakko Admin",
+    "subtitle": "Restricted access — authorized personnel only",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Sign in",
+    "submitting": "Signing in…",
+    "error": "Invalid credentials. Check your email and password.",
+    "footer": "Byakko API Admin Panel",
+    "emailError": "Enter a valid email address",
+    "passwordError": "Password is required"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "clients": "Clients",
+    "users": "Users",
+    "categories": "Categories",
+    "permissions": "Permissions",
+    "relationConditions": "Rel. Conditions",
+    "logout": "Log out",
+    "expandSidebar": "Expand sidebar",
+    "collapseSidebar": "Collapse sidebar"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "pending": "Pending"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "clients": "Clients",
+    "users": "Users",
+    "permissions": "Permissions",
+    "categories": "Categories",
+    "recentClients": "Recent Clients",
+    "recentUsers": "Recent Users",
+    "viewAll": "View all →",
+    "noClients": "No clients yet",
+    "createFirstClient": "Create your first client to get started.",
+    "noUsers": "No users yet",
+    "usersWillAppear": "Users will appear here once clients are created."
+  },
+  "clients": {
+    "title": "Clients",
+    "description": "Manage API clients and their access keys.",
+    "newClient": "New Client",
+    "name": "Name",
+    "status": "Status",
+    "webhookUrl": "Webhook URL",
+    "created": "Created",
+    "lastUpdated": "Last Updated",
+    "noClients": "No clients yet",
+    "createFirst": "Create your first API client to get started.",
+    "client": "Client",
+    "create": {
+      "title": "New Client",
+      "description": "Register a new API client. The API key will be shown once.",
+      "nameHint": "A descriptive name for this client",
+      "webhookHint": "Optional. Receives event notifications.",
+      "hmacHint": "Optional. Used to sign webhook payloads.",
+      "success": "Client Created",
+      "apiKeyFor": "API key for \"{{name}}\"",
+      "copyWarning": "Copy this key now. For security reasons, it will not be shown again. Store it in a safe place — you will need to regenerate it if lost.",
+      "copyApiKey": "Copy API key"
+    },
+    "edit": {
+      "title": "Edit {{name}}",
+      "description": "Update webhook URL or rotate the HMAC secret.",
+      "webhookPlaceholder": "Leave blank to remove the current URL.",
+      "hmacPlaceholder": "Enter new secret to rotate. Leave blank to keep the existing secret."
+    },
+    "actions": {
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "edit": "Edit",
+      "delete": "Delete",
+      "editTitle": "Edit client",
+      "deleteTitle": "Delete Client",
+      "deleteConfirm": "This will permanently delete the client and revoke its API key. All associated data will be lost."
+    },
+    "detail": {
+      "loading": "Loading…",
+      "couldNotLoad": "Could not load client.",
+      "usersTab": "Users",
+      "noUsers": "No users",
+      "noUsersDescription": "This client has no registered users yet."
+    }
+  },
+  "users": {
+    "title": "Users",
+    "description": "Manage users and their permissions across clients.",
+    "newUser": "New User",
+    "client": "Client",
+    "email": "Email",
+    "name": "Name",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "created": "Created",
+    "noUsers": "No users",
+    "createFirst": "Create a user to get started. Users are scoped to a client.",
+    "create": {
+      "title": "New User",
+      "description": "Create a new user for a client.",
+      "selectClient": "Select a client…",
+      "passwordHint": "At least 8 characters",
+      "createButton": "Create User"
+    },
+    "edit": {
+      "title": "Edit {{email}}",
+      "description": "Update the user's profile information.",
+      "saveButton": "Save Changes"
+    },
+    "deleteConfirm": "This will permanently delete the user and revoke all their permissions. This action cannot be undone.",
+    "deleteTitle": "Delete User",
+    "detail": {
+      "backToClient": "Back to Client",
+      "loading": "Loading…",
+      "user": "User",
+      "status": "Status",
+      "permissions": "Permissions",
+      "grantPermission": "Grant Permission",
+      "permission": "Permission",
+      "granted": "Granted",
+      "revoked": "Revoked",
+      "noPermissions": "No permissions",
+      "noPermissionsGranted": "This user has no permissions granted yet.",
+      "revoke": "Revoke",
+      "revokePermission": "Revoke Permission?",
+      "revokeConfirm": "This will remove access for this permission. The user will no longer be able to perform this action.",
+      "history": "Permission History",
+      "noHistory": "No history",
+      "noHistoryDescription": "No permission changes have been recorded for this user.",
+      "grantedViaApi": "Granted via API (not by a user)",
+      "alreadyGranted": "Grayed-out permissions are already granted.",
+      "cannotLoad": "Cannot load user details. Navigate from the users list or provide clientId in the URL.",
+      "couldNotLoad": "Could not load user.",
+      "grantPermissionTitle": "Grant Permission",
+      "grantPermissionDescription": "Grant a permission to {{email}}",
+      "grantButton": "Grant",
+      "selectPermission": "Select a permission…"
+    },
+    "actions": {
+      "edit": "Edit",
+      "delete": "Delete"
+    }
+  },
+  "categories": {
+    "title": "Categories",
+    "description": "Permission categories organized in a hierarchy.",
+    "newCategory": "New Category",
+    "path": "Path",
+    "name": "Name",
+    "slug": "Slug",
+    "description": "Description",
+    "noCategories": "No categories",
+    "createFirst": "Create a category to organize permissions.",
+    "create": {
+      "title": "New Category",
+      "description": "Create a new permission category for a client.",
+      "parent": "Parent Category",
+      "none": "None (root category)",
+      "parentHint": "Optional. Create as a root category if not selected.",
+      "createButton": "Create Category"
+    },
+    "actions": {
+      "edit": "Edit",
+      "delete": "Delete",
+      "deleteTitle": "Delete Category"
+    }
+  },
+  "permissions": {
+    "title": "Permissions",
+    "description": "Manage permission actions for clients and categories.",
+    "newPermission": "New Permission",
+    "action": "Action",
+    "description": "Description",
+    "noPermissions": "No permissions",
+    "createFirst": "Create a permission to define actions for users.",
+    "create": {
+      "title": "New Permission",
+      "description": "Create a new permission for a client and category.",
+      "selectClient": "Select a client first.",
+      "selectCategory": "Select a category…",
+      "actionHint": "Lowercase alphanumeric with : _ -",
+      "createButton": "Create Permission"
+    },
+    "actions": {
+      "edit": "Edit",
+      "delete": "Delete",
+      "deleteTitle": "Delete Permission"
+    }
+  },
+  "relationConditions": {
+    "title": "Relation Conditions",
+    "description": "Condition keys that extend permission checks with context.",
+    "newCondition": "New Condition",
+    "conditionKey": "Condition Key",
+    "permission": "Permission",
+    "created": "Created",
+    "noConditions": "No relation conditions",
+    "createFirst": "Create a condition key to extend permission checks.",
+    "create": {
+      "title": "New Relation Condition",
+      "description": "Create a condition key for a permission.",
+      "selectClient": "Select a client first.",
+      "selectPermission": "Select a permission…",
+      "keyHint": "Lowercase alphanumeric with _ -",
+      "descriptionPlaceholder": "Optional description",
+      "createButton": "Create Condition"
+    },
+    "actions": {
+      "edit": "Edit",
+      "delete": "Delete",
+      "deleteTitle": "Delete Condition"
+    }
+  },
+  "confirmDialog": {
+    "title": "Are you sure?",
+    "description": "This action cannot be undone.",
+    "delete": "Delete"
+  },
+  "emptyState": {
+    "noResults": "No results",
+    "nothingHere": "Nothing here yet."
+  },
+  "errorState": {
+    "title": "Something went wrong",
+    "description": "Failed to load data. Please try again.",
+    "tryAgain": "Try again"
+  }
+}

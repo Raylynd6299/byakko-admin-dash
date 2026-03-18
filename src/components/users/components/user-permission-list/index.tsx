@@ -1,10 +1,11 @@
-import { ReactElement, useState } from "react";
+import { type ReactElement, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Shield, ShieldOff } from "lucide-react";
 import { DataTable, type Column } from "@/components/common/data-table";
-import { EmptyState } from "@/components/common/empty-state";
 import { ConfirmDialog } from "@/components/common/confirm-dialog";
 import { Button, BUTTON_VARIANT } from "@/components/ui/button";
 import { useRevokePermission } from "@/hooks/mutations/useUserMutations";
+import { RevokedBadge } from "./components/revoked-badge";
 import type { UserPermission } from "@/types/user.types";
 import type { Permission } from "@/types/permission.types";
 
@@ -21,23 +22,6 @@ interface UserPermissionListProps {
   onGrantClick?:   () => void;
 }
 
-// ─── Revoked badge ───────────────────────────────────────────────────────────
-
-function RevokedBadge({ date }: { date: string }): ReactElement {
-  return (
-    <span
-      className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-xs"
-      style={{
-        backgroundColor: "var(--danger-bg)",
-        color:           "var(--danger-fg)",
-      }}
-    >
-      <ShieldOff size={10} strokeWidth={1.5} />
-      Revoked {new Date(date).toLocaleDateString()}
-    </span>
-  );
-}
-
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export function UserPermissionList({
@@ -50,6 +34,7 @@ export function UserPermissionList({
   onRetry,
   onGrantClick,
 }: UserPermissionListProps): ReactElement {
+  const { t } = useTranslation();
   const [revokeId, setRevokeId] = useState<string | null>(null);
   const permissionToRevoke = permissions.find((p) => p.id === revokeId);
 
@@ -75,7 +60,7 @@ export function UserPermissionList({
   const columns: Column<UserPermission>[] = [
     {
       key:    "permission",
-      header: "Permission",
+      header: t("users.detail.permission"),
       render: (perm) => {
         const detail = permissionMap.get(perm.permissionId);
         return (
@@ -94,7 +79,7 @@ export function UserPermissionList({
     },
     {
       key:    "granted",
-      header: "Granted",
+      header: t("users.detail.granted"),
       width:  "w-32",
       render: (perm) => (
         <span className="text-xs" style={{ color: "var(--text-muted)" }}>
@@ -104,7 +89,7 @@ export function UserPermissionList({
     },
     {
       key:    "status",
-      header: "Status",
+      header: t("users.detail.status"),
       width:  "w-28",
       render: (perm) =>
         perm.revokedAt ? (
@@ -118,7 +103,7 @@ export function UserPermissionList({
             }}
           >
             <Shield size={10} strokeWidth={1.5} />
-            Active
+            {t("status.active")}
           </span>
         ),
     },
@@ -133,8 +118,8 @@ export function UserPermissionList({
               variant={BUTTON_VARIANT.GHOST}
               size="sm"
               onClick={() => setRevokeId(perm.id)}
-              aria-label="Revoke permission"
-              title="Revoke"
+              aria-label={t("users.detail.revoke")}
+              title={t("users.detail.revoke")}
               style={{ color: "var(--danger-fg)" }}
             >
               <ShieldOff size={13} strokeWidth={1.5} />
@@ -153,13 +138,13 @@ export function UserPermissionList({
         isLoading={isLoading}
         isError={isError}
         onRetry={onRetry}
-        emptyTitle="No permissions"
-        emptyMessage="This user has no permissions granted yet."
+        emptyTitle={t("users.detail.noPermissions")}
+        emptyMessage={t("users.detail.noPermissionsGranted")}
         emptyIcon={Shield}
         emptyAction={
           onGrantClick ? (
             <Button size="sm" onClick={onGrantClick}>
-              Grant Permission
+              {t("users.detail.grantPermission")}
             </Button>
           ) : undefined
         }
@@ -170,9 +155,8 @@ export function UserPermissionList({
         open={Boolean(revokeId)}
         onClose={() => setRevokeId(null)}
         onConfirm={handleRevoke}
-        title="Revoke Permission?"
-        description={`This will remove access for permission "${permissionToRevoke?.permissionId ?? ""}". The user will no longer be able to perform this action.`}
-        confirmLabel="Revoke"
+        title={t("users.detail.revokePermission")}
+        description={t("users.detail.revokeConfirm")}
         isLoading={revokeMutation.isPending}
       />
     </>

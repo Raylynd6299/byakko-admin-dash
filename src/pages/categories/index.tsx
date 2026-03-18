@@ -1,4 +1,4 @@
-import { ReactElement } from "react";
+import { type ReactElement } from "react";
 import { CategoryList } from "@/components/categories";
 
 export function CategoriesPage(): ReactElement {

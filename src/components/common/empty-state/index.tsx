@@ -1,4 +1,5 @@
-import { ReactElement } from "react";
+import { type ReactElement } from "react";
+import { useTranslation } from "react-i18next";
 import type { LucideIcon } from "lucide-react";
 import { Inbox } from "lucide-react";
 
@@ -10,11 +11,13 @@ interface EmptyStateProps {
 }
 
 export function EmptyState({
-  title   = "No results",
-  message = "Nothing here yet.",
+  title,
+  message,
   icon:   Icon = Inbox,
   action,
 }: EmptyStateProps): ReactElement {
+  const { t } = useTranslation();
+
   return (
     <div className="flex flex-col items-center justify-center py-16 text-center">
       <div
@@ -24,10 +27,10 @@ export function EmptyState({
         <Icon size={22} strokeWidth={1.5} style={{ color: "var(--text-muted)" }} />
       </div>
       <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
-        {title}
+        {title ?? t("emptyState.noResults")}
       </p>
       <p className="mt-1 text-xs" style={{ color: "var(--text-muted)" }}>
-        {message}
+        {message ?? t("emptyState.nothingHere")}
       </p>
       {action && <div className="mt-4">{action}</div>}
     </div>

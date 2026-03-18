@@ -1,4 +1,5 @@
-import { ReactElement, useState } from "react";
+import { type ReactElement, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Trash2 } from "lucide-react";
 import { Button, BUTTON_VARIANT } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/common/confirm-dialog";
@@ -14,6 +15,7 @@ interface CategoryActionsProps {
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export function CategoryActions({ category }: CategoryActionsProps): ReactElement {
+  const { t } = useTranslation();
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
 
   const deleteMutation = useDeleteCategory();
@@ -35,8 +37,8 @@ export function CategoryActions({ category }: CategoryActionsProps): ReactElemen
           variant={BUTTON_VARIANT.GHOST}
           size="sm"
           onClick={() => setDeleteOpen(true)}
-          aria-label="Delete category"
-          title="Delete"
+          aria-label={t("categories.actions.delete")}
+          title={t("categories.actions.delete")}
           style={{ color: "var(--danger-fg)" }}
         >
           <Trash2 size={13} strokeWidth={1.5} />
@@ -47,9 +49,8 @@ export function CategoryActions({ category }: CategoryActionsProps): ReactElemen
         open={deleteOpen}
         onClose={() => setDeleteOpen(false)}
         onConfirm={handleDelete}
-        title={`Delete "${category.name}"?`}
-        description="This will permanently delete the category. Permissions using this category will lose their association."
-        confirmLabel="Delete"
+        title={t("categories.actions.deleteTitle")}
+        description={t("categories.actions.deleteConfirm")}
         isLoading={deleteMutation.isPending}
       />
     </>

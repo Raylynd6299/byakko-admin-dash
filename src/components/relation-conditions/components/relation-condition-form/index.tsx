@@ -1,9 +1,11 @@
-import { ReactElement, useEffect, useMemo } from "react";
+import { type ReactElement, useEffect, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Select, type SelectOption } from "@/components/ui/select";
 import {
   createRelationConditionSchema,
   type CreateRelationConditionFormValues,
@@ -33,34 +35,28 @@ interface ClientSelectProps {
 }
 
 function ClientSelect({ clients, value, onChange, error, disabled }: ClientSelectProps): ReactElement {
+  const { t } = useTranslation();
+
+  const options: SelectOption<string>[] = [
+    { value: "", label: t("relationConditions.create.selectClient") },
+    ...clients.map((c) => ({ value: c.id, label: c.name })),
+  ];
+
   return (
     <div className="flex flex-col gap-1.5">
-      <label
-        htmlFor="clientId"
-        className="text-xs font-medium"
-        style={{ color: "var(--text-secondary)" }}
-      >
-        Client
+      <label className="text-xs font-medium" style={{ color: "var(--text-secondary)" }}>
+        {t("clients.client")}
       </label>
-      <select
-        id="clientId"
-        value={value}
-        onChange={(e): void => onChange(e.target.value)}
-        disabled={disabled}
-        className="w-full rounded-md border px-3 py-2 text-sm outline-none transition-colors duration-150 focus:border-[var(--border-focus)]"
-        style={{
-          backgroundColor: error ? "var(--danger-bg)" : "var(--input-bg)",
-          borderColor:     error ? "var(--danger)" : "var(--input-border)",
-          color:           "var(--text-primary)",
-        }}
-      >
-        <option value="">Select a client…</option>
-        {clients.map((c) => (
-          <option key={c.id} value={c.id}>
-            {c.name}
-          </option>
-        ))}
-      </select>
+      <div style={error ? { backgroundColor: "var(--danger-bg)" } : undefined}>
+        <Select
+          value={value}
+          options={options}
+          onChange={onChange}
+          disabled={disabled}
+          aria-label={t("clients.client")}
+          buttonClassName={error ? "border-[var(--danger)]" : undefined}
+        />
+      </div>
       {error && (
         <p className="text-xs" style={{ color: "var(--danger-fg)" }}>
           {error}
@@ -87,42 +83,33 @@ function PermissionSelect({
   onChange,
   disabled,
 }: PermissionSelectProps): ReactElement {
+  const { t } = useTranslation();
+
   const eligiblePermissions = useMemo(() => {
     if (!clientId) return [];
     return permissions.filter((p) => p.clientId === clientId);
   }, [permissions, clientId]);
 
+  const options: SelectOption<string>[] = [
+    { value: "", label: t("relationConditions.create.selectPermission") },
+    ...eligiblePermissions.map((p) => ({ value: p.id, label: p.action })),
+  ];
+
   return (
     <div className="flex flex-col gap-1.5">
-      <label
-        htmlFor="permissionId"
-        className="text-xs font-medium"
-        style={{ color: "var(--text-secondary)" }}
-      >
-        Permission
+      <label className="text-xs font-medium" style={{ color: "var(--text-secondary)" }}>
+        {t("relationConditions.permission")}
       </label>
-      <select
-        id="permissionId"
+      <Select
         value={value}
-        onChange={(e): void => onChange(e.target.value)}
+        options={options}
+        onChange={onChange}
         disabled={disabled || !clientId}
-        className="w-full rounded-md border px-3 py-2 text-sm outline-none transition-colors duration-150 focus:border-[var(--border-focus)]"
-        style={{
-          backgroundColor: "var(--input-bg)",
-          borderColor:     "var(--input-border)",
-          color:           "var(--text-primary)",
-        }}
-      >
-        <option value="">Select a permission…</option>
-        {eligiblePermissions.map((p) => (
-          <option key={p.id} value={p.id}>
-            {p.action}
-          </option>
-        ))}
-      </select>
+        aria-label={t("relationConditions.permission")}
+      />
       {!clientId && (
         <p className="text-xs" style={{ color: "var(--text-muted)" }}>
-          Select a client first.
+          {t("relationConditions.create.selectClient")}
         </p>
       )}
     </div>
@@ -139,6 +126,8 @@ export function RelationConditionForm({
   onSubmit,
   isLoading = false,
 }: RelationConditionFormProps): ReactElement {
+  const { t } = useTranslation();
+
   const {
     register,
     handleSubmit,
@@ -167,8 +156,8 @@ export function RelationConditionForm({
     <Dialog
       open={open}
       onClose={onClose}
-      title="New Relation Condition"
-      description="Create a condition key for a permission."
+      title={t("relationConditions.create.title")}
+      description={t("relationConditions.create.description")}
       footer={
         <>
           <Button
@@ -177,7 +166,7 @@ export function RelationConditionForm({
             onClick={onClose}
             disabled={isLoading}
           >
-            Cancel
+            {t("common.cancel")}
           </Button>
           <Button
             type="submit"
@@ -185,7 +174,7 @@ export function RelationConditionForm({
             size="sm"
             isLoading={isLoading}
           >
-            Create Condition
+            {t("relationConditions.create.createButton")}
           </Button>
         </>
       }
@@ -212,17 +201,17 @@ export function RelationConditionForm({
         />
 
         <Input
-          label="Condition Key"
+          label={t("relationConditions.conditionKey")}
           placeholder="user_id"
-          hint="Lowercase alphanumeric with _ -"
+          hint={t("relationConditions.create.keyHint")}
           error={errors.conditionKey?.message}
           disabled={isLoading}
           {...register("conditionKey")}
         />
 
         <Input
-          label="Description"
-          placeholder="Optional description"
+          label={t("relationConditions.description")}
+          placeholder={t("relationConditions.create.descriptionPlaceholder")}
           error={errors.description?.message}
           disabled={isLoading}
           {...register("description")}

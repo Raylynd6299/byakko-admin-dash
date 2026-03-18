@@ -1,4 +1,5 @@
-import { ReactElement, useState } from "react";
+import { type ReactElement, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Pencil, Trash2 } from "lucide-react";
 import { Button, BUTTON_VARIANT } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/common/confirm-dialog";
@@ -16,6 +17,7 @@ interface UserActionsProps {
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export function UserActions({ user }: UserActionsProps): ReactElement {
+  const { t } = useTranslation();
   const [editOpen,   setEditOpen]   = useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
 
@@ -54,8 +56,8 @@ export function UserActions({ user }: UserActionsProps): ReactElement {
           variant={BUTTON_VARIANT.GHOST}
           size="sm"
           onClick={() => setEditOpen(true)}
-          aria-label="Edit user"
-          title="Edit"
+          aria-label={t("users.actions.edit")}
+          title={t("users.actions.edit")}
         >
           <Pencil size={13} strokeWidth={1.5} />
         </Button>
@@ -65,8 +67,8 @@ export function UserActions({ user }: UserActionsProps): ReactElement {
           variant={BUTTON_VARIANT.GHOST}
           size="sm"
           onClick={() => setDeleteOpen(true)}
-          aria-label="Delete user"
-          title="Delete"
+          aria-label={t("users.actions.delete")}
+          title={t("users.actions.delete")}
           style={{ color: "var(--danger-fg)" }}
         >
           <Trash2 size={13} strokeWidth={1.5} />
@@ -88,9 +90,8 @@ export function UserActions({ user }: UserActionsProps): ReactElement {
         open={deleteOpen}
         onClose={() => setDeleteOpen(false)}
         onConfirm={handleDelete}
-        title={`Delete "${user.email}"?`}
-        description="This will permanently delete the user and revoke all their permissions. This action cannot be undone."
-        confirmLabel="Delete User"
+        title={t("users.deleteTitle")}
+        description={t("users.deleteConfirm")}
         isLoading={deleteMutation.isPending}
       />
     </>

@@ -1,0 +1,250 @@
+{
+  "common": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "create": "Crear",
+    "search": "Buscar",
+    "loading": "Cargando...",
+    "noResults": "Sin resultados",
+    "nothingHere": "Nada aquí todavía.",
+    "tryAgain": "Reintentar",
+    "all": "Todos",
+    "allClients": "Todos los clientes",
+    "allStatuses": "Todos los estados",
+    "notConfigured": "No configurado",
+    "notSet": "No establecido",
+    "back": "Volver"
+  },
+  "login": {
+    "title": "Byakko Admin",
+    "subtitle": "Acceso restringido — solo personal autorizado",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "submit": "Iniciar sesión",
+    "submitting": "Iniciando sesión…",
+    "error": "Credenciales inválidas. Verifica tu correo y contraseña.",
+    "footer": "Panel de Administración Byakko API",
+    "emailError": "Ingresa un correo electrónico válido",
+    "passwordError": "La contraseña es obligatoria"
+  },
+  "nav": {
+    "dashboard": "Panel",
+    "clients": "Clientes",
+    "users": "Usuarios",
+    "categories": "Categorías",
+    "permissions": "Permisos",
+    "relationConditions": "Cond. Relación",
+    "logout": "Cerrar sesión",
+    "expandSidebar": "Expandir menú",
+    "collapseSidebar": "Colapsar menú"
+  },
+  "status": {
+    "active": "Activo",
+    "inactive": "Inactivo",
+    "pending": "Pendiente"
+  },
+  "dashboard": {
+    "title": "Panel",
+    "clients": "Clientes",
+    "users": "Usuarios",
+    "permissions": "Permisos",
+    "categories": "Categorías",
+    "recentClients": "Clientes Recientes",
+    "recentUsers": "Usuarios Recientes",
+    "viewAll": "Ver todos →",
+    "noClients": "Aún no hay clientes",
+    "createFirstClient": "Crea tu primer cliente para comenzar.",
+    "noUsers": "Aún no hay usuarios",
+    "usersWillAppear": "Los usuarios aparecerán aquí cuando se creen clientes."
+  },
+  "clients": {
+    "title": "Clientes",
+    "description": "Administra los clientes API y sus claves de acceso.",
+    "newClient": "Nuevo Cliente",
+    "name": "Nombre",
+    "status": "Estado",
+    "webhookUrl": "URL de Webhook",
+    "created": "Creado",
+    "lastUpdated": "Última Actualización",
+    "noClients": "Aún no hay clientes",
+    "createFirst": "Crea tu primer cliente API para comenzar.",
+    "client": "Cliente",
+    "create": {
+      "title": "Nuevo Cliente",
+      "description": "Registra un nuevo cliente API. La clave API se mostrará una sola vez.",
+      "nameHint": "Un nombre descriptivo para este cliente",
+      "webhookHint": "Opcional. Recibe notificaciones de eventos.",
+      "hmacHint": "Opcional. Usado para firmar payloads de webhook.",
+      "success": "Cliente Creado",
+      "apiKeyFor": "Clave API para \"{{name}}\"",
+      "copyWarning": "Copia esta clave ahora. Por seguridad, no se mostrará nuevamente. Guárdala en un lugar seguro — tendrás que regenerarla si la pierdes.",
+      "copyApiKey": "Copiar clave API"
+    },
+    "edit": {
+      "title": "Editar {{name}}",
+      "description": "Actualiza la URL del webhook o rota el secreto HMAC.",
+      "webhookPlaceholder": "Déjalo vacío para eliminar la URL actual.",
+      "hmacPlaceholder": "Ingresa un nuevo secreto para rotar. Déjalo vacío para mantener el existente."
+    },
+    "actions": {
+      "activate": "Activar",
+      "deactivate": "Desactivar",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "editTitle": "Editar cliente",
+      "deleteTitle": "Eliminar Cliente",
+      "deleteConfirm": "Esto eliminará permanentemente el cliente y revocará su clave API. Todos los datos asociados se perderán."
+    },
+    "detail": {
+      "loading": "Cargando…",
+      "couldNotLoad": "No se pudo cargar el cliente.",
+      "usersTab": "Usuarios",
+      "noUsers": "Sin usuarios",
+      "noUsersDescription": "Este cliente no tiene usuarios registrados todavía."
+    }
+  },
+  "users": {
+    "title": "Usuarios",
+    "description": "Administra usuarios y sus permisos en diferentes clientes.",
+    "newUser": "Nuevo Usuario",
+    "client": "Cliente",
+    "email": "Correo electrónico",
+    "name": "Nombre",
+    "firstName": "Nombre",
+    "lastName": "Apellido",
+    "created": "Creado",
+    "noUsers": "Sin usuarios",
+    "createFirst": "Crea un usuario para comenzar. Los usuarios están asociados a un cliente.",
+    "create": {
+      "title": "Nuevo Usuario",
+      "description": "Crea un nuevo usuario para un cliente.",
+      "selectClient": "Selecciona un cliente…",
+      "passwordHint": "Mínimo 8 caracteres",
+      "createButton": "Crear Usuario"
+    },
+    "edit": {
+      "title": "Editar {{email}}",
+      "description": "Actualiza la información del perfil del usuario.",
+      "saveButton": "Guardar Cambios"
+    },
+    "deleteConfirm": "Esto eliminará permanentemente el usuario y revocará todos sus permisos. Esta acción no se puede deshacer.",
+    "deleteTitle": "Eliminar Usuario",
+    "detail": {
+      "backToClient": "Volver al Cliente",
+      "loading": "Cargando…",
+      "user": "Usuario",
+      "status": "Estado",
+      "permissions": "Permisos",
+      "grantPermission": "Otorgar Permiso",
+      "permission": "Permiso",
+      "granted": "Otorgado",
+      "revoked": "Revocado",
+      "noPermissions": "Sin permisos",
+      "noPermissionsGranted": "Este usuario no tiene permisos otorgados todavía.",
+      "revoke": "Revocar",
+      "revokePermission": "¿Revocar Permiso?",
+      "revokeConfirm": "Esto removerá el acceso a este permiso. El usuario ya no podrá realizar esta acción.",
+      "history": "Historial de Permisos",
+      "noHistory": "Sin historial",
+      "noHistoryDescription": "No se han registrado cambios de permisos para este usuario.",
+      "grantedViaApi": "Otorgado via API (no por un usuario)",
+      "alreadyGranted": "Los permisos en gris ya están otorgados.",
+      "cannotLoad": "No se pueden cargar los detalles del usuario. Navega desde la lista de usuarios o proporciona clientId en la URL.",
+      "couldNotLoad": "No se pudo cargar el usuario.",
+      "grantPermissionTitle": "Otorgar Permiso",
+      "grantPermissionDescription": "Otorgar un permiso a {{email}}",
+      "grantButton": "Otorgar",
+      "selectPermission": "Selecciona un permiso…"
+    },
+    "actions": {
+      "edit": "Editar",
+      "delete": "Eliminar"
+    }
+  },
+  "categories": {
+    "title": "Categorías",
+    "description": "Categorías de permisos organizadas en jerarquía.",
+    "newCategory": "Nueva Categoría",
+    "path": "Ruta",
+    "name": "Nombre",
+    "slug": "Slug",
+    "description": "Descripción",
+    "noCategories": "Sin categorías",
+    "createFirst": "Crea una categoría para organizar permisos.",
+    "create": {
+      "title": "Nueva Categoría",
+      "description": "Crea una nueva categoría de permisos para un cliente.",
+      "parent": "Categoría Padre",
+      "none": "Ninguna (categoría raíz)",
+      "parentHint": "Opcional. Se creará como categoría raíz si no se selecciona.",
+      "createButton": "Crear Categoría"
+    },
+    "actions": {
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "deleteTitle": "Eliminar Categoría"
+    }
+  },
+  "permissions": {
+    "title": "Permisos",
+    "description": "Administra acciones de permisos para clientes y categorías.",
+    "newPermission": "Nuevo Permiso",
+    "action": "Acción",
+    "description": "Descripción",
+    "noPermissions": "Sin permisos",
+    "createFirst": "Crea un permiso para definir acciones para usuarios.",
+    "create": {
+      "title": "Nuevo Permiso",
+      "description": "Crea un nuevo permiso para un cliente y categoría.",
+      "selectClient": "Selecciona un cliente primero.",
+      "selectCategory": "Selecciona una categoría…",
+      "actionHint": "Alfanumérico en minúsculas con : _ -",
+      "createButton": "Crear Permiso"
+    },
+    "actions": {
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "deleteTitle": "Eliminar Permiso"
+    }
+  },
+  "relationConditions": {
+    "title": "Condiciones de Relación",
+    "description": "Claves de condición que extienden las verificaciones de permisos con contexto.",
+    "newCondition": "Nueva Condición",
+    "conditionKey": "Clave de Condición",
+    "permission": "Permiso",
+    "created": "Creado",
+    "noConditions": "Sin condiciones de relación",
+    "createFirst": "Crea una clave de condición para extender las verificaciones de permisos.",
+    "create": {
+      "title": "Nueva Condición de Relación",
+      "description": "Crea una clave de condición para un permiso.",
+      "selectClient": "Selecciona un cliente primero.",
+      "selectPermission": "Selecciona un permiso…",
+      "keyHint": "Alfanumérico en minúsculas con _ -",
+      "descriptionPlaceholder": "Descripción opcional",
+      "createButton": "Crear Condición"
+    },
+    "actions": {
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "deleteTitle": "Eliminar Condición"
+    }
+  },
+  "confirmDialog": {
+    "title": "¿Estás seguro?",
+    "description": "Esta acción no se puede deshacer.",
+    "delete": "Eliminar"
+  },
+  "emptyState": {
+    "noResults": "Sin resultados",
+    "nothingHere": "Nada aquí todavía."
+  },
+  "errorState": {
+    "title": "Algo salió mal",
+    "description": "No se pudieron cargar los datos. Por favor, intenta de nuevo.",
+    "tryAgain": "Reintentar"
+  }
+}

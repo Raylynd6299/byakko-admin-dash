@@ -1,5 +1,6 @@
-import { ReactElement } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { type ReactElement } from "react";
+import { useTranslation } from "react-i18next";
+import { useParams, useNavigate } from "react-router";
 import { ArrowLeft, CalendarDays, Globe, Shield, Users } from "lucide-react";
 import { PageHeader } from "@/components/common/page-header";
 import { StatusBadge } from "@/components/common/status-badge";
@@ -9,80 +10,13 @@ import { Button, BUTTON_VARIANT } from "@/components/ui/button";
 import { useClient } from "@/hooks/queries/useClients";
 import { useUsers } from "@/hooks/queries/useUsers";
 import { ROUTES } from "@/router/routes";
+import { DetailField } from "./components/detail-field";
 import type { User } from "@/types/user.types";
-
-// ─── Users table columns ──────────────────────────────────────────────────────
-
-const USER_COLUMNS: Column<User>[] = [
-  {
-    key:    "name",
-    header: "Name",
-    render: (user) => {
-      const full = [user.firstName, user.lastName].filter(Boolean).join(" ");
-      return (
-        <span className="font-medium" style={{ color: "var(--text-primary)" }}>
-          {full || <span style={{ color: "var(--text-muted)" }}>—</span>}
-        </span>
-      );
-    },
-  },
-  {
-    key:    "email",
-    header: "Email",
-    render: (user) => (
-      <span className="text-xs font-mono" style={{ color: "var(--text-secondary)" }}>
-        {user.email}
-      </span>
-    ),
-  },
-  {
-    key:    "status",
-    header: "Status",
-    width:  "w-28",
-    render: (user) => <StatusBadge status={user.status} />,
-  },
-  {
-    key:    "created",
-    header: "Created",
-    width:  "w-36",
-    render: (user) => (
-      <span className="text-xs" style={{ color: "var(--text-muted)" }}>
-        {new Date(user.createdAt).toLocaleDateString()}
-      </span>
-    ),
-  },
-];
-
-// ─── Detail field ─────────────────────────────────────────────────────────────
-
-interface DetailFieldProps {
-  icon:  React.ReactNode;
-  label: string;
-  value: React.ReactNode;
-}
-
-function DetailField({ icon, label, value }: DetailFieldProps): ReactElement {
-  return (
-    <div className="flex flex-col gap-1">
-      <div className="flex items-center gap-1.5">
-        <span style={{ color: "var(--text-muted)" }}>{icon}</span>
-        <span
-          className="text-xs font-medium uppercase tracking-wide"
-          style={{ color: "var(--text-muted)" }}
-        >
-          {label}
-        </span>
-      </div>
-      <div className="text-sm" style={{ color: "var(--text-secondary)" }}>
-        {value}
-      </div>
-    </div>
-  );
-}
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export function ClientDetailPage(): ReactElement {
+  const { t } = useTranslation();
   const { id = "" }  = useParams<{ id: string }>();
   const navigate      = useNavigate();
 
@@ -104,8 +38,48 @@ export function ClientDetailPage(): ReactElement {
     navigate(ROUTES.USER_DETAIL(user.id));
   };
 
+  const USER_COLUMNS: Column<User>[] = [
+    {
+      key:    "name",
+      header: t("users.name"),
+      render: (user) => {
+        const full = [user.firstName, user.lastName].filter(Boolean).join(" ");
+        return (
+          <span className="font-medium" style={{ color: "var(--text-primary)" }}>
+            {full || <span style={{ color: "var(--text-muted)" }}>—</span>}
+          </span>
+        );
+      },
+    },
+    {
+      key:    "email",
+      header: t("users.email"),
+      render: (user) => (
+        <span className="text-xs font-mono" style={{ color: "var(--text-secondary)" }}>
+          {user.email}
+        </span>
+      ),
+    },
+    {
+      key:    "status",
+      header: t("users.detail.status"),
+      width:  "w-28",
+      render: (user) => <StatusBadge status={user.status} />,
+    },
+    {
+      key:    "created",
+      header: t("users.created"),
+      width:  "w-36",
+      render: (user) => (
+        <span className="text-xs" style={{ color: "var(--text-muted)" }}>
+          {new Date(user.createdAt).toLocaleDateString()}
+        </span>
+      ),
+    },
+  ];
+
   if (clientError) {
-    return <ErrorState message="Could not load client." onRetry={() => void refetchClient()} />;
+    return <ErrorState message={t("clients.detail.couldNotLoad")} onRetry={() => void refetchClient()} />;
   }
 
   return (
@@ -119,14 +93,14 @@ export function ClientDetailPage(): ReactElement {
           className="-ml-1 mb-2"
         >
           <ArrowLeft size={14} strokeWidth={1.5} />
-          All Clients
+          {t("clients.title")}
         </Button>
 
         <PageHeader
           title={
             clientLoading
-              ? "Loading…"
-              : (client?.name ?? "Client")
+              ? t("clients.detail.loading")
+              : (client?.name ?? t("clients.client"))
           }
           description={`ID: ${id}`}
           action={client ? <StatusBadge status={client.isActive} /> : undefined}
@@ -143,12 +117,12 @@ export function ClientDetailPage(): ReactElement {
       >
         <DetailField
           icon={<Shield size={13} strokeWidth={1.5} />}
-          label="Status"
+          label={t("clients.status")}
           value={client ? <StatusBadge status={client.isActive} /> : "—"}
         />
         <DetailField
           icon={<Globe size={13} strokeWidth={1.5} />}
-          label="Webhook URL"
+          label={t("clients.webhookUrl")}
           value={
             clientLoading ? (
               <div
@@ -158,13 +132,13 @@ export function ClientDetailPage(): ReactElement {
             ) : client?.webhookUrl ? (
               <span className="break-all font-mono text-xs">{client.webhookUrl}</span>
             ) : (
-              <span style={{ color: "var(--text-muted)" }}>Not configured</span>
+              <span style={{ color: "var(--text-muted)" }}>{t("common.notConfigured")}</span>
             )
           }
         />
         <DetailField
           icon={<CalendarDays size={13} strokeWidth={1.5} />}
-          label="Created"
+          label={t("clients.created")}
           value={
             clientLoading ? (
               <div
@@ -180,7 +154,7 @@ export function ClientDetailPage(): ReactElement {
         />
         <DetailField
           icon={<CalendarDays size={13} strokeWidth={1.5} />}
-          label="Last Updated"
+          label={t("clients.lastUpdated")}
           value={
             clientLoading ? (
               <div
@@ -200,7 +174,7 @@ export function ClientDetailPage(): ReactElement {
       <div className="mb-3 flex items-center gap-2">
         <Users size={14} strokeWidth={1.5} style={{ color: "var(--text-muted)" }} />
         <h2 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
-          Users
+          {t("clients.detail.usersTab")}
         </h2>
         {!usersLoading && !usersError && (
           <span
@@ -223,8 +197,8 @@ export function ClientDetailPage(): ReactElement {
         isError={usersError}
         onRetry={() => void refetchUsers()}
         onRowClick={handleUserClick}
-        emptyTitle="No users"
-        emptyMessage="This client has no registered users yet."
+        emptyTitle={t("clients.detail.noUsers")}
+        emptyMessage={t("clients.detail.noUsersDescription")}
         emptyIcon={Users}
       />
     </>

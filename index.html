@@ -5,6 +5,18 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>byakko-frontend</title>
+    <script>
+      // Apply theme BEFORE React renders to avoid flash
+      (function() {
+        try {
+          var stored = localStorage.getItem('byakko-admin-theme');
+          var theme = stored ? JSON.parse(stored).state?.theme : 'dark';
+          document.documentElement.classList.add(theme || 'dark');
+        } catch (e) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

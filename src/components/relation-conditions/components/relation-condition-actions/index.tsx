@@ -1,4 +1,5 @@
-import { ReactElement, useState } from "react";
+import { type ReactElement, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Trash2 } from "lucide-react";
 import { Button, BUTTON_VARIANT } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/common/confirm-dialog";
@@ -17,6 +18,7 @@ interface RelationConditionActionsProps {
 export function RelationConditionActions({
   condition,
 }: RelationConditionActionsProps): ReactElement {
+  const { t } = useTranslation();
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
 
   const deleteMutation = useDeleteRelationCondition();
@@ -39,8 +41,8 @@ export function RelationConditionActions({
           variant={BUTTON_VARIANT.GHOST}
           size="sm"
           onClick={() => setDeleteOpen(true)}
-          aria-label="Delete condition"
-          title="Delete"
+          aria-label={t("relationConditions.actions.delete")}
+          title={t("relationConditions.actions.delete")}
           style={{ color: "var(--danger-fg)" }}
         >
           <Trash2 size={13} strokeWidth={1.5} />
@@ -51,9 +53,8 @@ export function RelationConditionActions({
         open={deleteOpen}
         onClose={() => setDeleteOpen(false)}
         onConfirm={handleDelete}
-        title={`Delete "${condition.conditionKey}"?`}
-        description="This will permanently delete the relation condition. Permissions using this condition key may behave differently."
-        confirmLabel="Delete"
+        title={t("relationConditions.actions.deleteTitle")}
+        description={t("relationConditions.actions.deleteConfirm")}
         isLoading={deleteMutation.isPending}
       />
     </>

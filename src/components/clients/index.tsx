@@ -1,5 +1,6 @@
-import { ReactElement, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { type ReactElement, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router";
 import { Plus, Users } from "lucide-react";
 import { DataTable, type Column } from "@/components/common/data-table";
 import { PageHeader } from "@/components/common/page-header";
@@ -14,57 +15,10 @@ import { ROUTES } from "@/router/routes";
 import type { Client } from "@/types/client.types";
 import type { CreateClientFormValues } from "@/schemas/client.schema";
 
-// ─── Table columns ────────────────────────────────────────────────────────────
-
-const COLUMNS: Column<Client>[] = [
-  {
-    key:    "name",
-    header: "Name",
-    render: (client) => (
-      <span className="font-medium" style={{ color: "var(--text-primary)" }}>
-        {client.name}
-      </span>
-    ),
-  },
-  {
-    key:    "status",
-    header: "Status",
-    width:  "w-28",
-    render: (client) => <StatusBadge status={client.isActive} />,
-  },
-  {
-    key:    "webhook",
-    header: "Webhook URL",
-    render: (client) =>
-      client.webhookUrl ? (
-        <span className="text-xs font-mono truncate max-w-xs block" style={{ color: "var(--text-secondary)" }}>
-          {client.webhookUrl}
-        </span>
-      ) : (
-        <span className="text-xs" style={{ color: "var(--text-muted)" }}>—</span>
-      ),
-  },
-  {
-    key:    "created",
-    header: "Created",
-    width:  "w-36",
-    render: (client) => (
-      <span className="text-xs" style={{ color: "var(--text-muted)" }}>
-        {new Date(client.createdAt).toLocaleDateString()}
-      </span>
-    ),
-  },
-  {
-    key:    "actions",
-    header: "",
-    width:  "w-28",
-    render: (client) => <ClientActions client={client} />,
-  },
-];
-
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export function ClientList(): ReactElement {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { data: clients = [], isLoading, isError, refetch } = useClients();
 
@@ -93,34 +47,80 @@ export function ClientList(): ReactElement {
     navigate(ROUTES.CLIENT_DETAIL(client.id));
   };
 
+  const columns: Column<Client>[] = [
+    {
+      key:    "name",
+      header: t("clients.name"),
+      render: (client) => (
+        <span className="font-medium" style={{ color: "var(--text-primary)" }}>
+          {client.name}
+        </span>
+      ),
+    },
+    {
+      key:    "status",
+      header: t("clients.status"),
+      width:  "w-28",
+      render: (client) => <StatusBadge status={client.isActive} />,
+    },
+    {
+      key:    "webhook",
+      header: t("clients.webhookUrl"),
+      render: (client) =>
+        client.webhookUrl ? (
+          <span className="text-xs font-mono truncate max-w-xs block" style={{ color: "var(--text-secondary)" }}>
+            {client.webhookUrl}
+          </span>
+        ) : (
+          <span className="text-xs" style={{ color: "var(--text-muted)" }}>—</span>
+        ),
+    },
+    {
+      key:    "created",
+      header: t("clients.created"),
+      width:  "w-36",
+      render: (client) => (
+        <span className="text-xs" style={{ color: "var(--text-muted)" }}>
+          {new Date(client.createdAt).toLocaleDateString()}
+        </span>
+      ),
+    },
+    {
+      key:    "actions",
+      header: "",
+      width:  "w-28",
+      render: (client) => <ClientActions client={client} />,
+    },
+  ];
+
   return (
     <>
       <PageHeader
-        title="Clients"
-        description="Manage API clients and their access keys."
+        title={t("clients.title")}
+        description={t("clients.description")}
         action={
           <Button size="sm" onClick={() => setCreateOpen(true)}>
             <Plus size={14} strokeWidth={2} />
-            New Client
+            {t("clients.newClient")}
           </Button>
         }
       />
 
       <DataTable<Client>
         data={clients}
-        columns={COLUMNS}
+        columns={columns}
         keyExtractor={(c) => c.id}
         isLoading={isLoading}
         isError={isError}
         onRetry={() => void refetch()}
         onRowClick={handleRowClick}
-        emptyTitle="No clients yet"
-        emptyMessage="Create your first API client to get started."
+        emptyTitle={t("clients.noClients")}
+        emptyMessage={t("clients.createFirst")}
         emptyIcon={Users}
         emptyAction={
           <Button size="sm" onClick={() => setCreateOpen(true)}>
             <Plus size={14} strokeWidth={2} />
-            New Client
+            {t("clients.newClient")}
           </Button>
         }
       />

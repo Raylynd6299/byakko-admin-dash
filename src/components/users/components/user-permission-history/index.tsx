@@ -1,4 +1,5 @@
-import { ReactElement } from "react";
+import { type ReactElement } from "react";
+import { useTranslation } from "react-i18next";
 import { History, ArrowUpRight, ArrowDownRight } from "lucide-react";
 import { EmptyState } from "@/components/common/empty-state";
 import { ErrorState } from "@/components/common/error-state";
@@ -18,7 +19,9 @@ interface UserPermissionHistoryProps {
 // ─── Action badge ──────────────────────────────────────────────────────────────
 
 function ActionBadge({ action }: { action: PermissionHistoryEntry["action"] }): ReactElement {
+  const { t } = useTranslation();
   const isGranted = action === "granted";
+  
   return (
     <span
       className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-xs font-medium"
@@ -28,7 +31,7 @@ function ActionBadge({ action }: { action: PermissionHistoryEntry["action"] }): 
       }}
     >
       {isGranted ? <ArrowUpRight size={10} strokeWidth={2} /> : <ArrowDownRight size={10} strokeWidth={2} />}
-      {action === "granted" ? "Granted" : "Revoked"}
+      {action === "granted" ? t("users.detail.granted") : t("users.detail.revoked")}
     </span>
   );
 }
@@ -41,11 +44,13 @@ interface TimelineItemProps {
 }
 
 function TimelineItem({ entry, permissionName }: TimelineItemProps): ReactElement {
+  const { t } = useTranslation();
+  
   const performer = entry.performedByApi
-    ? "API"
+    ? t("users.detail.grantedViaApi")
     : entry.performedByUserId
-      ? `User ${entry.performedByUserId.slice(0, 8)}`
-      : "System";
+      ? `${t("users.detail.user")} ${entry.performedByUserId.slice(0, 8)}`
+      : t("users.detail.history.system");
 
   return (
     <div className="flex items-start gap-3 py-3">
@@ -82,8 +87,10 @@ export function UserPermissionHistory({
   isError,
   onRetry,
 }: UserPermissionHistoryProps): ReactElement {
+  const { t } = useTranslation();
+
   if (isError) {
-    return <ErrorState message="Could not load permission history." onRetry={onRetry} />;
+    return <ErrorState onRetry={onRetry} />;
   }
 
   if (isLoading) {
@@ -103,8 +110,8 @@ export function UserPermissionHistory({
   if (history.length === 0) {
     return (
       <EmptyState
-        title="No history"
-        message="No permission changes have been recorded for this user."
+        title={t("users.detail.noHistory")}
+        message={t("users.detail.noHistoryDescription")}
         icon={History}
       />
     );
@@ -123,7 +130,7 @@ export function UserPermissionHistory({
         style={{ borderColor: "var(--border-subtle)" }}
       >
         <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
-          Permission History
+          {t("users.detail.history")}
         </h3>
       </div>
       <div className="divide-y" style={{ borderColor: "var(--border-subtle)" }}>

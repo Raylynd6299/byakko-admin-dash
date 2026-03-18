@@ -21,11 +21,8 @@ type ThemeStore = ThemeState & ThemeActions;
 
 function applyTheme(theme: Theme): void {
   const root = document.documentElement;
-  if (theme === THEME.DARK) {
-    root.classList.add("dark");
-  } else {
-    root.classList.remove("dark");
-  }
+  root.classList.remove("dark", "light");
+  root.classList.add(theme);
 }
 
 export const useThemeStore = create<ThemeStore>()(

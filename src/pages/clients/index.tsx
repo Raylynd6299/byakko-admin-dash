@@ -1,4 +1,4 @@
-import { ReactElement } from "react";
+import { type ReactElement } from "react";
 import { ClientList } from "@/components/clients";
 
 export function ClientsPage(): ReactElement {

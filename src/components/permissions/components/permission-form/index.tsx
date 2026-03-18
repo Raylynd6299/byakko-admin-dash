@@ -1,13 +1,14 @@
-import { ReactElement, useEffect, useMemo } from "react";
+import { type ReactElement, useEffect, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Select, type SelectOption } from "@/components/ui/select";
 import { createPermissionSchema, type CreatePermissionFormValues } from "@/schemas/permission.schema";
 import type { Client } from "@/types/client.types";
 import type { Category } from "@/types/category.types";
-import type { Permission } from "@/types/permission.types";
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 
@@ -31,34 +32,28 @@ interface ClientSelectProps {
 }
 
 function ClientSelect({ clients, value, onChange, error, disabled }: ClientSelectProps): ReactElement {
+  const { t } = useTranslation();
+
+  const options: SelectOption<string>[] = [
+    { value: "", label: t("permissions.create.selectClient") },
+    ...clients.map((c) => ({ value: c.id, label: c.name })),
+  ];
+
   return (
     <div className="flex flex-col gap-1.5">
-      <label
-        htmlFor="clientId"
-        className="text-xs font-medium"
-        style={{ color: "var(--text-secondary)" }}
-      >
-        Client
+      <label className="text-xs font-medium" style={{ color: "var(--text-secondary)" }}>
+        {t("clients.client")}
       </label>
-      <select
-        id="clientId"
-        value={value}
-        onChange={(e): void => onChange(e.target.value)}
-        disabled={disabled}
-        className="w-full rounded-md border px-3 py-2 text-sm outline-none transition-colors duration-150 focus:border-[var(--border-focus)]"
-        style={{
-          backgroundColor: error ? "var(--danger-bg)" : "var(--input-bg)",
-          borderColor:     error ? "var(--danger)" : "var(--input-border)",
-          color:           "var(--text-primary)",
-        }}
-      >
-        <option value="">Select a client…</option>
-        {clients.map((c) => (
-          <option key={c.id} value={c.id}>
-            {c.name}
-          </option>
-        ))}
-      </select>
+      <div style={error ? { backgroundColor: "var(--danger-bg)" } : undefined}>
+        <Select
+          value={value}
+          options={options}
+          onChange={onChange}
+          disabled={disabled}
+          aria-label={t("clients.client")}
+          buttonClassName={error ? "border-[var(--danger)]" : undefined}
+        />
+      </div>
       {error && (
         <p className="text-xs" style={{ color: "var(--danger-fg)" }}>
           {error}
@@ -79,42 +74,33 @@ interface CategorySelectProps {
 }
 
 function CategorySelect({ categories, clientId, value, onChange, disabled }: CategorySelectProps): ReactElement {
+  const { t } = useTranslation();
+
   const eligibleCategories = useMemo(() => {
     if (!clientId) return [];
     return categories.filter((c) => c.clientId === clientId);
   }, [categories, clientId]);
 
+  const options: SelectOption<string>[] = [
+    { value: "", label: t("permissions.create.selectCategory") },
+    ...eligibleCategories.map((c) => ({ value: c.id, label: `${c.path} — ${c.name}` })),
+  ];
+
   return (
     <div className="flex flex-col gap-1.5">
-      <label
-        htmlFor="categoryId"
-        className="text-xs font-medium"
-        style={{ color: "var(--text-secondary)" }}
-      >
-        Category
+      <label className="text-xs font-medium" style={{ color: "var(--text-secondary)" }}>
+        {t("categories.title")}
       </label>
-      <select
-        id="categoryId"
+      <Select
         value={value}
-        onChange={(e): void => onChange(e.target.value)}
+        options={options}
+        onChange={onChange}
         disabled={disabled || !clientId}
-        className="w-full rounded-md border px-3 py-2 text-sm outline-none transition-colors duration-150 focus:border-[var(--border-focus)]"
-        style={{
-          backgroundColor: "var(--input-bg)",
-          borderColor:     "var(--input-border)",
-          color:           "var(--text-primary)",
-        }}
-      >
-        <option value="">Select a category…</option>
-        {eligibleCategories.map((c) => (
-          <option key={c.id} value={c.id}>
-            {c.path} — {c.name}
-          </option>
-        ))}
-      </select>
+        aria-label={t("categories.title")}
+      />
       {!clientId && (
         <p className="text-xs" style={{ color: "var(--text-muted)" }}>
-          Select a client first.
+          {t("permissions.create.selectClient")}
         </p>
       )}
     </div>
@@ -131,6 +117,8 @@ export function PermissionForm({
   onSubmit,
   isLoading = false,
 }: PermissionFormProps): ReactElement {
+  const { t } = useTranslation();
+
   const {
     register,
     handleSubmit,
@@ -159,8 +147,8 @@ export function PermissionForm({
     <Dialog
       open={open}
       onClose={onClose}
-      title="New Permission"
-      description="Create a new permission for a client and category."
+      title={t("permissions.create.title")}
+      description={t("permissions.create.description")}
       footer={
         <>
           <Button
@@ -169,7 +157,7 @@ export function PermissionForm({
             onClick={onClose}
             disabled={isLoading}
           >
-            Cancel
+            {t("common.cancel")}
           </Button>
           <Button
             type="submit"
@@ -177,7 +165,7 @@ export function PermissionForm({
             size="sm"
             isLoading={isLoading}
           >
-            Create Permission
+            {t("permissions.create.createButton")}
           </Button>
         </>
       }
@@ -204,9 +192,9 @@ export function PermissionForm({
         />
 
         <Input
-          label="Action"
+          label={t("permissions.action")}
           placeholder="read:users"
-          hint="Lowercase alphanumeric with : _ -"
+          hint={t("permissions.create.actionHint")}
           error={errors.action?.message}
           disabled={isLoading}
           {...register("action")}

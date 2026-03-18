@@ -1,4 +1,5 @@
-import { ReactElement, useState } from "react";
+import { type ReactElement, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Trash2 } from "lucide-react";
 import { Button, BUTTON_VARIANT } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/common/confirm-dialog";
@@ -14,6 +15,7 @@ interface PermissionActionsProps {
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export function PermissionActions({ permission }: PermissionActionsProps): ReactElement {
+  const { t } = useTranslation();
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
 
   const deleteMutation = useDeletePermission();
@@ -35,8 +37,8 @@ export function PermissionActions({ permission }: PermissionActionsProps): React
           variant={BUTTON_VARIANT.GHOST}
           size="sm"
           onClick={() => setDeleteOpen(true)}
-          aria-label="Delete permission"
-          title="Delete"
+          aria-label={t("permissions.actions.delete")}
+          title={t("permissions.actions.delete")}
           style={{ color: "var(--danger-fg)" }}
         >
           <Trash2 size={13} strokeWidth={1.5} />
@@ -47,9 +49,8 @@ export function PermissionActions({ permission }: PermissionActionsProps): React
         open={deleteOpen}
         onClose={() => setDeleteOpen(false)}
         onConfirm={handleDelete}
-        title={`Delete "${permission.action}"?`}
-        description="This will permanently delete the permission. Users with this permission will lose access."
-        confirmLabel="Delete"
+        title={t("permissions.actions.deleteTitle")}
+        description={t("permissions.actions.deleteConfirm")}
         isLoading={deleteMutation.isPending}
       />
     </>

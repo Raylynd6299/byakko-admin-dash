@@ -1,4 +1,5 @@
-import { ReactElement, useState } from "react";
+import { type ReactElement, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Pencil, Trash2, ToggleLeft, ToggleRight } from "lucide-react";
 import { Button, BUTTON_VARIANT } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/common/confirm-dialog";
@@ -16,6 +17,7 @@ interface ClientActionsProps {
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export function ClientActions({ client }: ClientActionsProps): ReactElement {
+  const { t } = useTranslation();
   const [editOpen,   setEditOpen]   = useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
 
@@ -58,8 +60,8 @@ export function ClientActions({ client }: ClientActionsProps): ReactElement {
           size="sm"
           onClick={handleToggle}
           isLoading={toggleMutation.isPending}
-          aria-label={client.isActive ? "Deactivate client" : "Activate client"}
-          title={client.isActive ? "Deactivate" : "Activate"}
+          aria-label={client.isActive ? t("clients.actions.deactivate") : t("clients.actions.activate")}
+          title={client.isActive ? t("clients.actions.deactivate") : t("clients.actions.activate")}
         >
           {client.isActive ? (
             <ToggleRight size={15} strokeWidth={1.5} style={{ color: "var(--success-fg)" }} />
@@ -73,8 +75,8 @@ export function ClientActions({ client }: ClientActionsProps): ReactElement {
           variant={BUTTON_VARIANT.GHOST}
           size="sm"
           onClick={() => setEditOpen(true)}
-          aria-label="Edit client"
-          title="Edit"
+          aria-label={t("clients.actions.editTitle")}
+          title={t("clients.actions.edit")}
         >
           <Pencil size={13} strokeWidth={1.5} />
         </Button>
@@ -84,8 +86,8 @@ export function ClientActions({ client }: ClientActionsProps): ReactElement {
           variant={BUTTON_VARIANT.GHOST}
           size="sm"
           onClick={() => setDeleteOpen(true)}
-          aria-label="Delete client"
-          title="Delete"
+          aria-label={t("clients.actions.deleteTitle")}
+          title={t("clients.actions.delete")}
           style={{ color: "var(--danger-fg)" }}
         >
           <Trash2 size={13} strokeWidth={1.5} />
@@ -107,9 +109,8 @@ export function ClientActions({ client }: ClientActionsProps): ReactElement {
         open={deleteOpen}
         onClose={() => setDeleteOpen(false)}
         onConfirm={handleDelete}
-        title={`Delete "${client.name}"?`}
-        description="This will permanently delete the client and revoke its API key. All associated data will be lost."
-        confirmLabel="Delete Client"
+        title={t("clients.actions.deleteTitle")}
+        description={t("clients.actions.deleteConfirm")}
         isLoading={deleteMutation.isPending}
       />
     </>

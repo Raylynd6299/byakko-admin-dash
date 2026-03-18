@@ -1,9 +1,11 @@
-import { ReactElement, useEffect } from "react";
+import { type ReactElement, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Select, type SelectOption } from "@/components/ui/select";
 import {
   createUserSchema,
   editUserSchema,
@@ -50,34 +52,28 @@ interface ClientSelectProps {
 }
 
 function ClientSelect({ clients, value, onChange, error, disabled }: ClientSelectProps): ReactElement {
+  const { t } = useTranslation();
+
+  const options: SelectOption<string>[] = [
+    { value: "", label: t("users.create.selectClient") },
+    ...clients.map((c) => ({ value: c.id, label: c.name })),
+  ];
+
   return (
     <div className="flex flex-col gap-1.5">
-      <label
-        htmlFor="clientId"
-        className="text-xs font-medium"
-        style={{ color: "var(--text-secondary)" }}
-      >
-        Client
+      <label className="text-xs font-medium" style={{ color: "var(--text-secondary)" }}>
+        {t("users.client")}
       </label>
-      <select
-        id="clientId"
-        value={value}
-        onChange={(e): void => onChange(e.target.value)}
-        disabled={disabled}
-        className="w-full rounded-md border px-3 py-2 text-sm outline-none transition-colors duration-150 focus:border-[var(--border-focus)]"
-        style={{
-          backgroundColor: error ? "var(--danger-bg)" : "var(--input-bg)",
-          borderColor:     error ? "var(--danger)" : "var(--input-border)",
-          color:           "var(--text-primary)",
-        }}
-      >
-        <option value="">Select a client…</option>
-        {clients.map((c) => (
-          <option key={c.id} value={c.id}>
-            {c.name}
-          </option>
-        ))}
-      </select>
+      <div style={error ? { backgroundColor: "var(--danger-bg)" } : undefined}>
+        <Select
+          value={value}
+          options={options}
+          onChange={onChange}
+          disabled={disabled}
+          aria-label={t("users.client")}
+          buttonClassName={error ? "border-[var(--danger)]" : undefined}
+        />
+      </div>
       {error && (
         <p className="text-xs" style={{ color: "var(--danger-fg)" }}>
           {error}
@@ -92,14 +88,14 @@ function ClientSelect({ clients, value, onChange, error, disabled }: ClientSelec
 function CreateForm({
   clients,
   onSubmit,
-  onClose,
   isLoading,
 }: {
   clients:    Client[];
   onSubmit:   (values: CreateUserFormValues) => void;
-  onClose:    () => void;
   isLoading?: boolean;
 }): ReactElement {
+  const { t } = useTranslation();
+
   const {
     register,
     handleSubmit,
@@ -131,7 +127,7 @@ function CreateForm({
       />
 
       <Input
-        label="Email"
+        label={t("users.email")}
         type="email"
         placeholder="user@example.com"
         error={errors.email?.message}
@@ -140,16 +136,16 @@ function CreateForm({
       />
 
       <Input
-        label="Password"
+        label={t("login.password")}
         type="password"
-        placeholder="At least 8 characters"
+        placeholder={t("users.create.passwordHint")}
         error={errors.password?.message}
         disabled={isLoading}
         {...register("password")}
       />
 
       <Input
-        label="First Name"
+        label={t("users.firstName")}
         placeholder="John"
         error={errors.firstName?.message}
         disabled={isLoading}
@@ -157,7 +153,7 @@ function CreateForm({
       />
 
       <Input
-        label="Last Name"
+        label={t("users.lastName")}
         placeholder="Doe"
         error={errors.lastName?.message}
         disabled={isLoading}
@@ -172,14 +168,14 @@ function CreateForm({
 function EditForm({
   user,
   onSubmit,
-  onClose,
   isLoading,
 }: {
   user:      User;
   onSubmit:  (values: EditUserFormValues) => void;
-  onClose:   () => void;
   isLoading?: boolean;
 }): ReactElement {
+  const { t } = useTranslation();
+
   const {
     register,
     handleSubmit,
@@ -210,7 +206,7 @@ function EditForm({
           className="text-xs font-medium"
           style={{ color: "var(--text-muted)" }}
         >
-          Email
+          {t("users.email")}
         </label>
         <div
           className="rounded-md border px-3 py-2 text-sm"
@@ -225,7 +221,7 @@ function EditForm({
       </div>
 
       <Input
-        label="First Name"
+        label={t("users.firstName")}
         placeholder="John"
         error={errors.firstName?.message}
         disabled={isLoading}
@@ -233,7 +229,7 @@ function EditForm({
       />
 
       <Input
-        label="Last Name"
+        label={t("users.lastName")}
         placeholder="Doe"
         error={errors.lastName?.message}
         disabled={isLoading}
@@ -251,9 +247,15 @@ export function UserForm({
   isLoading = false,
   ...modeProps
 }: UserFormProps): ReactElement {
+  const { t } = useTranslation();
+
   const formId     = modeProps.mode === "create" ? "user-create-form" : "user-edit-form";
-  const title      = modeProps.mode === "create" ? "New User" : `Edit ${modeProps.user.email}`;
-  const submitLabel = modeProps.mode === "create" ? "Create User" : "Save Changes";
+  const title      = modeProps.mode === "create"
+    ? t("users.create.title")
+    : t("users.edit.title", { email: modeProps.user.email });
+  const submitLabel = modeProps.mode === "create"
+    ? t("users.create.createButton")
+    : t("users.edit.saveButton");
 
   return (
     <Dialog
@@ -262,8 +264,8 @@ export function UserForm({
       title={title}
       description={
         modeProps.mode === "create"
-          ? "Create a new user for a client."
-          : "Update the user's profile information."
+          ? t("users.create.description")
+          : t("users.edit.description")
       }
       footer={
         <>
@@ -273,7 +275,7 @@ export function UserForm({
             onClick={onClose}
             disabled={isLoading}
           >
-            Cancel
+            {t("common.cancel")}
           </Button>
           <Button
             type="submit"
@@ -290,14 +292,12 @@ export function UserForm({
         <CreateForm
           clients={modeProps.clients}
           onSubmit={modeProps.onSubmit}
-          onClose={onClose}
           isLoading={isLoading}
         />
       ) : (
         <EditForm
           user={modeProps.user}
           onSubmit={modeProps.onSubmit}
-          onClose={onClose}
           isLoading={isLoading}
         />
       )}

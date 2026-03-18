@@ -1,5 +1,6 @@
-import { ReactElement, useState, useMemo } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { type ReactElement, useState, useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import { useParams, useNavigate, useLocation } from "react-router";
 import { ArrowLeft, Mail, User as UserIcon, CalendarDays, Shield } from "lucide-react";
 import { PageHeader } from "@/components/common/page-header";
 import { StatusBadge } from "@/components/common/status-badge";
@@ -11,59 +12,14 @@ import { GrantPermissionDialog } from "@/components/users/components/grant-permi
 import { useUser, useUserPermissions, usePermissionHistory } from "@/hooks/queries/useUsers";
 import { usePermissions } from "@/hooks/queries/usePermissions";
 import { ROUTES } from "@/router/routes";
+import { DetailField } from "./components/detail-field";
+import { useDerivedClientId } from "./hooks/useDerivedClientId";
 import type { User } from "@/types/user.types";
-
-// ─── Location state type ──────────────────────────────────────────────────────
-
-interface LocationState {
-  user?: User;
-}
-
-// ─── Helper to extract clientId ──────────────────────────────────────────────
-
-function useDerivedClientId(): string | null {
-  const { id } = useParams<{ id: string }>();
-  const location = useLocation();
-
-  // From navigation state
-  const state = location.state as LocationState | undefined;
-  if (state?.user?.clientId) return state.user.clientId;
-
-  // From URL query param (fallback)
-  const params = new URLSearchParams(location.search);
-  const clientIdParam = params.get("clientId");
-  if (clientIdParam) return clientIdParam;
-
-  return null;
-}
-
-// ─── Detail card ───────────────────────────────────────────────────────────────
-
-interface DetailFieldProps {
-  icon:  React.ReactNode;
-  label: string;
-  value: React.ReactNode;
-}
-
-function DetailField({ icon, label, value }: DetailFieldProps): ReactElement {
-  return (
-    <div className="flex flex-col gap-1">
-      <div className="flex items-center gap-1.5">
-        <span style={{ color: "var(--text-muted)" }}>{icon}</span>
-        <span className="text-xs font-medium uppercase tracking-wide" style={{ color: "var(--text-muted)" }}>
-          {label}
-        </span>
-      </div>
-      <div className="text-sm" style={{ color: "var(--text-secondary)" }}>
-        {value}
-      </div>
-    </div>
-  );
-}
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export function UserDetailPage(): ReactElement {
+  const { t } = useTranslation();
   const { id = "" } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const location = useLocation();
@@ -120,13 +76,13 @@ export function UserDetailPage(): ReactElement {
   };
 
   // User object from state (optimistic) or query
-  const displayUser: User | null = (location.state as LocationState)?.user ?? user ?? null;
+  const displayUser: User | null = (location.state as { user?: User } | undefined)?.user ?? user ?? null;
 
   // ── No clientId error ─────────────────────────────────────────────────────
   if (!clientId) {
     return (
       <ErrorState
-        message="Cannot load user details. Navigate from the users list or provide clientId in the URL."
+        message={t("users.detail.cannotLoad")}
         onRetry={() => navigate(ROUTES.CLIENTS)}
       />
     );
@@ -134,7 +90,7 @@ export function UserDetailPage(): ReactElement {
 
   // ── User error ────────────────────────────────────────────────────────────
   if (userError) {
-    return <ErrorState message="Could not load user." onRetry={() => void refetchUser()} />;
+    return <ErrorState message={t("users.detail.couldNotLoad")} onRetry={() => void refetchUser()} />;
   }
 
   // ── Loading ────────────────────────────────────────────────────────────────
@@ -151,14 +107,14 @@ export function UserDetailPage(): ReactElement {
           className="-ml-1 mb-2"
         >
           <ArrowLeft size={14} strokeWidth={1.5} />
-          Back to Client
+          {t("users.detail.backToClient")}
         </Button>
 
         <PageHeader
           title={
             isLoading
-              ? "Loading…"
-              : [displayUser?.firstName, displayUser?.lastName].filter(Boolean).join(" ") || displayUser?.email || "User"
+              ? t("users.detail.loading")
+              : [displayUser?.firstName, displayUser?.lastName].filter(Boolean).join(" ") || displayUser?.email || t("users.detail.user")
           }
           description={displayUser?.email ?? `ID: ${id}`}
           action={
@@ -177,7 +133,7 @@ export function UserDetailPage(): ReactElement {
       >
         <DetailField
           icon={<Mail size={13} strokeWidth={1.5} />}
-          label="Email"
+          label={t("users.email")}
           value={
             isLoading ? (
               <div className="h-4 w-32 animate-pulse rounded" style={{ backgroundColor: "var(--surface-3)" }} />
@@ -188,18 +144,18 @@ export function UserDetailPage(): ReactElement {
         />
         <DetailField
           icon={<UserIcon size={13} strokeWidth={1.5} />}
-          label="Name"
+          label={t("users.name")}
           value={
             isLoading ? (
               <div className="h-4 w-24 animate-pulse rounded" style={{ backgroundColor: "var(--surface-3)" }} />
             ) : [displayUser?.firstName, displayUser?.lastName].filter(Boolean).join(" ") || (
-              <span style={{ color: "var(--text-muted)" }}>Not set</span>
+              <span style={{ color: "var(--text-muted)" }}>{t("common.notSet")}</span>
             )
           }
         />
         <DetailField
           icon={<CalendarDays size={13} strokeWidth={1.5} />}
-          label="Created"
+          label={t("users.created")}
           value={
             isLoading ? (
               <div className="h-4 w-20 animate-pulse rounded" style={{ backgroundColor: "var(--surface-3)" }} />
@@ -212,7 +168,7 @@ export function UserDetailPage(): ReactElement {
         />
         <DetailField
           icon={<Shield size={13} strokeWidth={1.5} />}
-          label="Status"
+          label={t("users.detail.status")}
           value={displayUser ? <StatusBadge status={displayUser.status} /> : "—"}
         />
       </div>
@@ -222,7 +178,7 @@ export function UserDetailPage(): ReactElement {
         <div className="flex items-center gap-2">
           <Shield size={14} strokeWidth={1.5} style={{ color: "var(--text-muted)" }} />
           <h2 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
-            Permissions
+            {t("users.detail.permissions")}
           </h2>
           {!permLoading && !permError && (
             <span
@@ -242,7 +198,7 @@ export function UserDetailPage(): ReactElement {
           onClick={() => setGrantOpen(true)}
           disabled={!clientId}
         >
-          Grant Permission
+          {t("users.detail.grantPermission")}
         </Button>
       </div>
 

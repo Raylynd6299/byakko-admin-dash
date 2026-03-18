@@ -1,4 +1,4 @@
-import { ReactElement } from "react";
+import { type ReactElement } from "react";
 import {
   Table,
   TableHead,
@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/table";
 import { EmptyState } from "@/components/common/empty-state";
 import { ErrorState } from "@/components/common/error-state";
+import { SkeletonRow } from "./components/skeleton-row";
 import type { LucideIcon } from "lucide-react";
 
 // ─── Column definition ────────────────────────────────────────────────────────
@@ -36,26 +37,6 @@ interface DataTableProps<TRow> {
   emptyMessage?:  string;
   emptyIcon?:     LucideIcon;
   emptyAction?:   React.ReactNode;
-}
-
-// ─── Skeleton row ─────────────────────────────────────────────────────────────
-
-function SkeletonRow({ columns }: { columns: number }): ReactElement {
-  return (
-    <TableRow>
-      {Array.from({ length: columns }).map((_, i) => (
-        <TableTd key={i}>
-          <div
-            className="h-4 animate-pulse rounded"
-            style={{
-              backgroundColor: "var(--surface-3)",
-              width: i === 0 ? "60%" : i === columns - 1 ? "40%" : "75%",
-            }}
-          />
-        </TableTd>
-      ))}
-    </TableRow>
-  );
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
