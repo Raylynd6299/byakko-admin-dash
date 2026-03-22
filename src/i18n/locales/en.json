@@ -43,7 +43,8 @@
   "status": {
     "active": "Active",
     "inactive": "Inactive",
-    "pending": "Pending"
+    "pending": "Pending",
+    "suspended": "Suspended"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -156,7 +157,14 @@
       "grantPermissionTitle": "Grant Permission",
       "grantPermissionDescription": "Grant a permission to {{email}}",
       "grantButton": "Grant",
-      "selectPermission": "Select a permission…"
+      "selectCategory": "Select a category…",
+      "selectPermission": "Select a permission…",
+      "allPermissionsGranted": "All permissions in this category are already granted.",
+      "makeAdmin": "Make Admin",
+      "makeAdminTitle": "Make this user an admin?",
+      "makeAdminDescription": "This will grant all client permissions to this user. This action is not easily reversible.",
+      "makeAdminButton": "Confirm",
+      "makeAdminSuccess": "The user now has all client permissions."
     },
     "actions": {
       "edit": "Edit",
@@ -176,6 +184,7 @@
     "create": {
       "title": "New Category",
       "description": "Create a new permission category for a client.",
+      "selectClient": "Select a client first.",
       "parent": "Parent Category",
       "none": "None (root category)",
       "parentHint": "Optional. Create as a root category if not selected.",
@@ -195,18 +204,22 @@
     "description": "Description",
     "noPermissions": "No permissions",
     "createFirst": "Create a permission to define actions for users.",
+    "uncategorized": "Uncategorized",
     "create": {
       "title": "New Permission",
       "description": "Create a new permission for a client and category.",
       "selectClient": "Select a client first.",
       "selectCategory": "Select a category…",
       "actionHint": "Lowercase alphanumeric with : _ -",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Optional permission description",
       "createButton": "Create Permission"
     },
     "actions": {
       "edit": "Edit",
       "delete": "Delete",
-      "deleteTitle": "Delete Permission"
+      "deleteTitle": "Delete Permission",
+      "deleteConfirm": "This will permanently delete the permission and revoke access for all users who had it. This action cannot be undone."
     }
   },
   "relationConditions": {

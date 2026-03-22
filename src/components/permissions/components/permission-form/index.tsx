@@ -199,6 +199,14 @@ export function PermissionForm({
           disabled={isLoading}
           {...register("action")}
         />
+
+        <Input
+          label={t("permissions.create.descriptionLabel")}
+          placeholder={t("permissions.create.descriptionPlaceholder")}
+          error={errors.description?.message}
+          disabled={isLoading}
+          {...register("description")}
+        />
       </form>
     </Dialog>
   );

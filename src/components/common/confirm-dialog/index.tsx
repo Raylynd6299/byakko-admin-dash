@@ -1,16 +1,17 @@
 import { type ReactElement } from "react";
 import { useTranslation } from "react-i18next";
 import { Dialog } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+import { Button, type ButtonVariant, BUTTON_VARIANT } from "@/components/ui/button";
 
 interface ConfirmDialogProps {
-  open:          boolean;
-  onClose:       () => void;
-  onConfirm:     () => void;
-  title?:        string;
-  description?:  string;
-  confirmLabel?: string;
-  isLoading?:    boolean;
+  open:             boolean;
+  onClose:          () => void;
+  onConfirm:        () => void;
+  title?:           string;
+  description?:     string;
+  confirmLabel?:    string;
+  confirmVariant?:  ButtonVariant;
+  isLoading?:       boolean;
 }
 
 export function ConfirmDialog({
@@ -20,6 +21,7 @@ export function ConfirmDialog({
   title,
   description,
   confirmLabel,
+  confirmVariant = BUTTON_VARIANT.DESTRUCTIVE,
   isLoading = false,
 }: ConfirmDialogProps): ReactElement {
   const { t } = useTranslation();
@@ -40,7 +42,7 @@ export function ConfirmDialog({
             {t("common.cancel")}
           </Button>
           <Button
-            variant="destructive"
+            variant={confirmVariant}
             size="sm"
             onClick={onConfirm}
             isLoading={isLoading}

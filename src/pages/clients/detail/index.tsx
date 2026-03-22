@@ -35,7 +35,10 @@ export function ClientDetailPage(): ReactElement {
   } = useUsers(id ? { clientId: id } : undefined);
 
   const handleUserClick = (user: User): void => {
-    navigate(ROUTES.USER_DETAIL(user.id));
+    const url = user.clientId
+      ? `${ROUTES.USER_DETAIL(user.id)}?clientId=${user.clientId}`
+      : ROUTES.USER_DETAIL(user.id);
+    navigate(url, { state: { user } });
   };
 
   const USER_COLUMNS: Column<User>[] = [

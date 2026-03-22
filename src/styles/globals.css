@@ -62,6 +62,11 @@
   .border-default { border-color: var(--border-default); }
   .border-strong  { border-color: var(--border-strong); }
 
+  /* Divide utilities */
+  .divide-subtle  > * + * { border-color: var(--border-subtle); }
+  .divide-default > * + * { border-color: var(--border-default); }
+  .divide-strong  > * + * { border-color: var(--border-strong); }
+
   /* Text utilities */
   .text-p  { color: var(--text-primary); }
   .text-s  { color: var(--text-secondary); }

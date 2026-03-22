@@ -29,10 +29,7 @@ interface TableHeadProps {
 
 export function TableHead({ children, className }: TableHeadProps): ReactElement {
   return (
-    <thead
-      className={cn("border-b", className)}
-      style={{ borderColor: "var(--border-subtle)" }}
-    >
+    <thead className={cn("border-b border-subtle", className)}>
       {children}
     </thead>
   );
@@ -47,7 +44,7 @@ interface TableBodyProps {
 
 export function TableBody({ children, className }: TableBodyProps): ReactElement {
   return (
-    <tbody className={cn("divide-y", className)} style={{ borderColor: "var(--border-subtle)" }}>
+    <tbody className={cn(className)}>
       {children}
     </tbody>
   );
@@ -70,6 +67,7 @@ export function TableRow({ children, className, onClick }: TableRowProps): React
         onClick && "cursor-pointer hover:bg-[var(--surface-3)]",
         className
       )}
+      style={{ borderTop: "1px solid var(--border-subtle)" }}
     >
       {children}
     </tr>
@@ -89,11 +87,12 @@ export function TableTh({ children, className, align = "left" }: TableThProps): 
     <th
       className={cn(
         "px-4 py-2.5 text-xs font-medium uppercase tracking-wider",
-        align === "right"  && "text-right",
-        align === "center" && "text-center",
         className
       )}
-      style={{ color: "var(--text-muted)" }}
+      style={{
+        color:     "var(--text-muted)",
+        textAlign: align ?? "left",
+      }}
     >
       {children}
     </th>

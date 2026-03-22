@@ -30,6 +30,7 @@ export function FilterBar({ clientId, onClientChange, clients }: FilterBarProps)
         options={clientOptions}
         onChange={onClientChange}
         aria-label={t("clients.client")}
+        className="w-48"
       />
     </div>
   );

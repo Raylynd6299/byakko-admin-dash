@@ -5,12 +5,14 @@ import { EmptyState } from "@/components/common/empty-state";
 import { ErrorState } from "@/components/common/error-state";
 import type { PermissionHistoryEntry } from "@/types/user.types";
 import type { Permission } from "@/types/permission.types";
+import type { Category } from "@/types/category.types";
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 
 interface UserPermissionHistoryProps {
   history:        PermissionHistoryEntry[];
   permissionMap:  Map<string, Permission>;
+  categoryMap:    Map<string, Category>;
   isLoading?:     boolean;
   isError?:       boolean;
   onRetry?:       () => void;
@@ -40,10 +42,11 @@ function ActionBadge({ action }: { action: PermissionHistoryEntry["action"] }): 
 
 interface TimelineItemProps {
   entry:           PermissionHistoryEntry;
-  permissionName: string;
+  permissionName:  string;
+  categoryName?:   string;
 }
 
-function TimelineItem({ entry, permissionName }: TimelineItemProps): ReactElement {
+function TimelineItem({ entry, permissionName, categoryName }: TimelineItemProps): ReactElement {
   const { t } = useTranslation();
   
   const performer = entry.performedByApi
@@ -53,7 +56,10 @@ function TimelineItem({ entry, permissionName }: TimelineItemProps): ReactElemen
       : t("users.detail.history.system");
 
   return (
-    <div className="flex items-start gap-3 py-3">
+    <div
+      className="flex items-start gap-3 px-4 py-3"
+      style={{ borderTop: "1px solid var(--border-subtle)" }}
+    >
       {/* Dot */}
       <div
         className="mt-1.5 h-2 w-2 shrink-0 rounded-full"
@@ -67,6 +73,11 @@ function TimelineItem({ entry, permissionName }: TimelineItemProps): ReactElemen
           <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
             {permissionName}
           </span>
+          {categoryName && (
+            <span className="text-xs" style={{ color: "var(--text-muted)" }}>
+              · {categoryName}
+            </span>
+          )}
         </div>
         <div className="flex items-center gap-2 text-xs" style={{ color: "var(--text-muted)" }}>
           <span>{new Date(entry.performedAt).toLocaleString()}</span>
@@ -83,6 +94,7 @@ function TimelineItem({ entry, permissionName }: TimelineItemProps): ReactElemen
 export function UserPermissionHistory({
   history,
   permissionMap,
+  categoryMap,
   isLoading,
   isError,
   onRetry,
@@ -133,14 +145,16 @@ export function UserPermissionHistory({
           {t("users.detail.history")}
         </h3>
       </div>
-      <div className="divide-y" style={{ borderColor: "var(--border-subtle)" }}>
+      <div>
         {history.map((entry) => {
-          const perm = permissionMap.get(entry.permissionId);
+          const perm     = permissionMap.get(entry.permissionId);
+          const category = perm ? categoryMap.get(perm.categoryId) : undefined;
           return (
             <TimelineItem
               key={entry.id}
               entry={entry}
               permissionName={perm?.action ?? entry.permissionId.slice(0, 8)}
+              categoryName={category?.name}
             />
           );
         })}

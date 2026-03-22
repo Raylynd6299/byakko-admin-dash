@@ -8,12 +8,14 @@ import { useRevokePermission } from "@/hooks/mutations/useUserMutations";
 import { RevokedBadge } from "./components/revoked-badge";
 import type { UserPermission } from "@/types/user.types";
 import type { Permission } from "@/types/permission.types";
+import type { Category } from "@/types/category.types";
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 
 interface UserPermissionListProps {
   permissions:     UserPermission[];
-  permissionMap:   Map<string, Permission>; // permissionId → Permission
+  permissionMap:   Map<string, Permission>;
+  categoryMap:     Map<string, Category>;
   userId:          string;
   clientId:        string;
   isLoading?:      boolean;
@@ -27,6 +29,7 @@ interface UserPermissionListProps {
 export function UserPermissionList({
   permissions,
   permissionMap,
+  categoryMap,
   userId,
   clientId,
   isLoading,
@@ -58,6 +61,20 @@ export function UserPermissionList({
   // ─── Columns ──────────────────────────────────────────────────────────────
 
   const columns: Column<UserPermission>[] = [
+    {
+      key:    "category",
+      header: t("nav.categories"),
+      width:  "w-40",
+      render: (perm) => {
+        const detail   = permissionMap.get(perm.permissionId);
+        const category = detail ? categoryMap.get(detail.categoryId) : undefined;
+        return (
+          <span className="text-sm" style={{ color: "var(--text-secondary)" }}>
+            {category?.name ?? "—"}
+          </span>
+        );
+      },
+    },
     {
       key:    "permission",
       header: t("users.detail.permission"),

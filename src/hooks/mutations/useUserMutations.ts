@@ -5,6 +5,7 @@ import {
   deleteUser,
   grantUserPermission,
   revokeUserPermission,
+  makeUserAdmin,
 } from "@/services/users.service";
 import { USER_QUERY_KEYS } from "@/hooks/queries/useUsers";
 import type {
@@ -100,6 +101,26 @@ export function useRevokePermission(): UseMutationResult<void, Error, RevokePerm
     onSuccess: (_, vars): void => {
       void queryClient.invalidateQueries({ queryKey: USER_QUERY_KEYS.permissions(vars.userId, vars.input.clientId) });
       void queryClient.invalidateQueries({ queryKey: USER_QUERY_KEYS.history(vars.userId, vars.input.clientId) });
+    },
+  });
+}
+
+// ─── Make Admin ───────────────────────────────────────────────────────────────
+
+interface MakeAdminArgs {
+  userId:   string;
+  clientId: string;
+}
+
+export function useMakeAdmin(): UseMutationResult<void, Error, MakeAdminArgs> {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ userId, clientId }: MakeAdminArgs) => makeUserAdmin(userId, clientId),
+    onSuccess: (_, vars): void => {
+      // Refresh permissions — MakeAdmin grants all client permissions
+      void queryClient.invalidateQueries({ queryKey: USER_QUERY_KEYS.permissions(vars.userId, vars.clientId) });
+      void queryClient.invalidateQueries({ queryKey: USER_QUERY_KEYS.history(vars.userId, vars.clientId) });
     },
   });
 }

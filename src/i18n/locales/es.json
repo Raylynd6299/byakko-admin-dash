@@ -43,7 +43,8 @@
   "status": {
     "active": "Activo",
     "inactive": "Inactivo",
-    "pending": "Pendiente"
+    "pending": "Pendiente",
+    "suspended": "Suspendido"
   },
   "dashboard": {
     "title": "Panel",
@@ -156,7 +157,14 @@
       "grantPermissionTitle": "Otorgar Permiso",
       "grantPermissionDescription": "Otorgar un permiso a {{email}}",
       "grantButton": "Otorgar",
-      "selectPermission": "Selecciona un permiso…"
+      "selectCategory": "Selecciona una categoría…",
+      "selectPermission": "Selecciona un permiso…",
+      "allPermissionsGranted": "Todos los permisos de esta categoría ya están otorgados.",
+      "makeAdmin": "Hacer Admin",
+      "makeAdminTitle": "¿Hacer Admin a este usuario?",
+      "makeAdminDescription": "Esto otorgará todos los permisos del cliente a este usuario. Esta acción no se puede deshacer fácilmente.",
+      "makeAdminButton": "Confirmar",
+      "makeAdminSuccess": "El usuario ahora tiene todos los permisos del cliente."
     },
     "actions": {
       "edit": "Editar",
@@ -176,6 +184,7 @@
     "create": {
       "title": "Nueva Categoría",
       "description": "Crea una nueva categoría de permisos para un cliente.",
+      "selectClient": "Selecciona un cliente primero.",
       "parent": "Categoría Padre",
       "none": "Ninguna (categoría raíz)",
       "parentHint": "Opcional. Se creará como categoría raíz si no se selecciona.",
@@ -195,18 +204,22 @@
     "description": "Descripción",
     "noPermissions": "Sin permisos",
     "createFirst": "Crea un permiso para definir acciones para usuarios.",
+    "uncategorized": "Sin categoría",
     "create": {
       "title": "Nuevo Permiso",
       "description": "Crea un nuevo permiso para un cliente y categoría.",
       "selectClient": "Selecciona un cliente primero.",
       "selectCategory": "Selecciona una categoría…",
       "actionHint": "Alfanumérico en minúsculas con : _ -",
+      "descriptionLabel": "Descripción",
+      "descriptionPlaceholder": "Descripción opcional del permiso",
       "createButton": "Crear Permiso"
     },
     "actions": {
       "edit": "Editar",
       "delete": "Eliminar",
-      "deleteTitle": "Eliminar Permiso"
+      "deleteTitle": "Eliminar Permiso",
+      "deleteConfirm": "Esto eliminará permanentemente el permiso y revocará el acceso de todos los usuarios que lo tenían. Esta acción no se puede deshacer."
     }
   },
   "relationConditions": {

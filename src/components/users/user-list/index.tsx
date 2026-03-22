@@ -49,7 +49,10 @@ export function UserList(): ReactElement {
   };
 
   const handleRowClick = (user: User): void => {
-    navigate(ROUTES.USER_DETAIL(user.id), { state: { user } });
+    const url = user.clientId
+      ? `${ROUTES.USER_DETAIL(user.id)}?clientId=${user.clientId}`
+      : ROUTES.USER_DETAIL(user.id);
+    navigate(url, { state: { user } });
   };
 
   const columns: Column<User>[] = [

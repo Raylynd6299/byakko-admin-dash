@@ -1,20 +1,24 @@
 import { type ReactElement, useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams, useNavigate, useLocation } from "react-router";
-import { ArrowLeft, Mail, User as UserIcon, CalendarDays, Shield } from "lucide-react";
+import { ArrowLeft, Mail, User as UserIcon, CalendarDays, Shield, ShieldCheck } from "lucide-react";
 import { PageHeader } from "@/components/common/page-header";
 import { StatusBadge } from "@/components/common/status-badge";
 import { ErrorState } from "@/components/common/error-state";
+import { ConfirmDialog } from "@/components/common/confirm-dialog";
 import { Button, BUTTON_VARIANT } from "@/components/ui/button";
 import { UserPermissionList } from "@/components/users/components/user-permission-list";
 import { UserPermissionHistory } from "@/components/users/components/user-permission-history";
 import { GrantPermissionDialog } from "@/components/users/components/grant-permission-dialog";
 import { useUser, useUserPermissions, usePermissionHistory } from "@/hooks/queries/useUsers";
 import { usePermissions } from "@/hooks/queries/usePermissions";
+import { useCategories } from "@/hooks/queries/useCategories";
+import { useMakeAdmin } from "@/hooks/mutations/useUserMutations";
 import { ROUTES } from "@/router/routes";
 import { DetailField } from "./components/detail-field";
 import { useDerivedClientId } from "./hooks/useDerivedClientId";
 import type { User } from "@/types/user.types";
+import type { Category } from "@/types/category.types";
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
@@ -54,11 +58,18 @@ export function UserDetailPage(): ReactElement {
   } = usePermissionHistory(id, clientId);
 
   const { data: allPermissions = [] } = usePermissions();
+  const { data: allCategories = [] }  = useCategories();
 
   // Build permission map for quick lookup
   const permissionMap = useMemo(
     () => new Map(allPermissions.map((p) => [p.id, p])),
     [allPermissions]
+  );
+
+  // Build category map for quick lookup
+  const categoryMap = useMemo(
+    () => new Map<string, Category>(allCategories.map((c) => [c.id, c])),
+    [allCategories]
   );
 
   // Granted permission IDs (active only, not revoked)
@@ -69,6 +80,10 @@ export function UserDetailPage(): ReactElement {
 
   // Grant dialog state
   const [grantOpen, setGrantOpen] = useState<boolean>(false);
+
+  // Make Admin dialog state
+  const [makeAdminOpen, setMakeAdminOpen] = useState<boolean>(false);
+  const makeAdminMutation = useMakeAdmin();
 
   // Back to clients
   const handleBack = (): void => {
@@ -192,19 +207,31 @@ export function UserDetailPage(): ReactElement {
             </span>
           )}
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setGrantOpen(true)}
-          disabled={!clientId}
-        >
-          {t("users.detail.grantPermission")}
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant={BUTTON_VARIANT.OUTLINE}
+            size="sm"
+            onClick={() => setMakeAdminOpen(true)}
+            disabled={!clientId || !displayUser}
+          >
+            <ShieldCheck size={13} strokeWidth={1.5} />
+            {t("users.detail.makeAdmin")}
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setGrantOpen(true)}
+            disabled={!clientId}
+          >
+            {t("users.detail.grantPermission")}
+          </Button>
+        </div>
       </div>
 
       <UserPermissionList
         permissions={permissions}
         permissionMap={permissionMap}
+        categoryMap={categoryMap}
         userId={id}
         clientId={clientId}
         isLoading={permLoading}
@@ -218,6 +245,7 @@ export function UserDetailPage(): ReactElement {
         <UserPermissionHistory
           history={history}
           permissionMap={permissionMap}
+          categoryMap={categoryMap}
           isLoading={histLoading}
           isError={histError}
           onRetry={() => void refetchHist()}
@@ -233,6 +261,25 @@ export function UserDetailPage(): ReactElement {
           grantedKeys={grantedKeys}
         />
       )}
+
+      {/* Make Admin confirm dialog */}
+      <ConfirmDialog
+        open={makeAdminOpen}
+        onClose={() => setMakeAdminOpen(false)}
+        onConfirm={() => {
+          makeAdminMutation.mutate(
+            { userId: id, clientId },
+            {
+              onSuccess: () => setMakeAdminOpen(false),
+            }
+          );
+        }}
+        title={t("users.detail.makeAdminTitle")}
+        description={t("users.detail.makeAdminDescription")}
+        confirmLabel={t("users.detail.makeAdminButton")}
+        confirmVariant={BUTTON_VARIANT.DEFAULT}
+        isLoading={makeAdminMutation.isPending}
+      />
     </>
   );
 }

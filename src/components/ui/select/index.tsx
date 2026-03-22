@@ -105,7 +105,7 @@ export function Select<T = string>({
       {/* Dropdown */}
       <div
         className={cn(
-          "absolute left-0 top-full z-50 mt-1 min-w-full overflow-hidden rounded-lg border shadow-lg",
+          "absolute left-0 top-full z-50 mt-1 min-w-full w-max max-w-xs overflow-hidden rounded-lg border shadow-lg",
           "bg-[var(--surface-2)] border-[var(--border-default)]",
           "transition-all duration-200 ease-out",
           isOpen

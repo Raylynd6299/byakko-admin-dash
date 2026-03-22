@@ -71,7 +71,7 @@ function toHistoryEntry(raw: RawHistoryEntry): PermissionHistoryEntry {
     id:                  raw.id,
     userId:              raw.user_id,
     permissionId:        raw.permission_id,
-    action:              raw.action as PermissionHistoryEntry["action"],
+    action:              raw.action.toLowerCase() as PermissionHistoryEntry["action"],
     performedAt:         raw.performed_at,
     performedByUserId:   raw.performed_by_user_id,
     performedByApi:      raw.performed_by_api,
@@ -167,4 +167,13 @@ export async function listPermissionHistory(
     { params: { client_id: clientId } }
   );
   return data.map(toHistoryEntry);
+}
+
+export async function makeUserAdmin(
+  userId: string,
+  clientId: string
+): Promise<void> {
+  await httpClient.post(`/users/${userId}/make-admin`, null, {
+    params: { client_id: clientId },
+  });
 }
