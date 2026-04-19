@@ -26,14 +26,16 @@ export function UserList(): ReactElement {
   // Filter state
   const [clientIdFilter, setClientIdFilter] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<UserStatus | "">("");
+  const [searchFilter, setSearchFilter] = useState<string>("");
 
   // Data queries
   const { data: clients = [] } = useClients();
   const { data: users = [], isLoading, isError, refetch } = useUsers(
-    clientIdFilter || statusFilter
+    clientIdFilter || statusFilter || searchFilter
       ? {
           ...(clientIdFilter && { clientId: clientIdFilter }),
-          ...(statusFilter && { status: statusFilter }),
+          ...(statusFilter   && { status:   statusFilter }),
+          ...(searchFilter   && { search:   searchFilter }),
         }
       : undefined
   );
@@ -117,8 +119,10 @@ export function UserList(): ReactElement {
       <FilterBar
         clientId={clientIdFilter}
         status={statusFilter}
+        search={searchFilter}
         onClientChange={setClientIdFilter}
         onStatusChange={setStatusFilter}
+        onSearchChange={setSearchFilter}
         clients={clients.map((c) => ({ id: c.id, name: c.name }))}
       />
 

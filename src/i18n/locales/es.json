@@ -113,6 +113,7 @@
     "client": "Cliente",
     "email": "Correo electrónico",
     "name": "Nombre",
+    "searchPlaceholder": "Buscar por nombre o correo...",
     "firstName": "Nombre",
     "lastName": "Apellido",
     "created": "Creado",

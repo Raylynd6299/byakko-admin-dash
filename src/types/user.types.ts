@@ -1,7 +1,7 @@
 const USER_STATUS = {
-  ACTIVE: "active",
-  INACTIVE: "inactive",
-  PENDING: "pending",
+  ACTIVE:    "ACTIVE",
+  INACTIVE:  "INACTIVE",
+  SUSPENDED: "SUSPENDED",
 } as const;
 
 type UserStatus = (typeof USER_STATUS)[keyof typeof USER_STATUS];
@@ -32,7 +32,8 @@ export interface UpdateUserInput {
 
 export interface UserFilter {
   clientId?: string;
-  status?: UserStatus;
+  status?:   UserStatus;
+  search?:   string;
 }
 
 export interface UserPermission {

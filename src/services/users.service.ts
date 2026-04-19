@@ -84,6 +84,7 @@ export async function listUsers(filter?: UserFilter): Promise<User[]> {
   const params: Record<string, string> = {};
   if (filter?.clientId) params["client_id"] = filter.clientId;
   if (filter?.status)   params["status"]    = filter.status;
+  if (filter?.search)   params["search"]    = filter.search;
 
   const { data } = await httpClient.get<RawUser[]>("/users", { params });
   return data.map(toUser);

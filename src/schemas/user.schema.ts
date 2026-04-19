@@ -26,7 +26,8 @@ export type EditUserFormValues = z.infer<typeof editUserSchema>;
 
 export const userFilterSchema = z.object({
   clientId: z.string().optional(),
-  status:   z.enum([USER_STATUS.ACTIVE, USER_STATUS.INACTIVE, USER_STATUS.PENDING]).optional(),
+  status:   z.enum([USER_STATUS.ACTIVE, USER_STATUS.INACTIVE, USER_STATUS.SUSPENDED]).optional(),
+  search:   z.string().optional(),
 });
 
 export type UserFilterValues = z.infer<typeof userFilterSchema>;
