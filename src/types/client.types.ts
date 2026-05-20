@@ -24,3 +24,7 @@ export interface CreateClientResponse {
   client: Client;
   apiKey: string;
 }
+
+export interface RegenerateApiKeyResponse {
+  apiKey: string;
+}

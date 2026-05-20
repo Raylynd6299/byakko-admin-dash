@@ -103,7 +103,18 @@
       "couldNotLoad": "No se pudo cargar el cliente.",
       "usersTab": "Usuarios",
       "noUsers": "Sin usuarios",
-      "noUsersDescription": "Este cliente no tiene usuarios registrados todavía."
+      "noUsersDescription": "Este cliente no tiene usuarios registrados todavía.",
+      "hmacSecret": "Secreto HMAC",
+      "hmacSecretReveal": "Mostrar secreto",
+      "hmacSecretHide": "Ocultar secreto",
+      "notConfigured": "No configurado",
+      "regenerateApiKey": "Regenerar Clave API",
+      "regenerateConfirmTitle": "¿Regenerar Clave API?",
+      "regenerateConfirmMessage": "Esto invalidará permanentemente la clave API actual. Cualquier integración que la use dejará de funcionar de inmediato. Esta acción no se puede deshacer.",
+      "regenerateConfirm": "Regenerar",
+      "regenerateCancel": "Cancelar",
+      "regenerateSuccess": "Nueva Clave API generada",
+      "regenerateError": "No se pudo regenerar la clave API. Por favor, intentá de nuevo."
     }
   },
   "users": {

@@ -103,7 +103,18 @@
       "couldNotLoad": "Could not load client.",
       "usersTab": "Users",
       "noUsers": "No users",
-      "noUsersDescription": "This client has no registered users yet."
+      "noUsersDescription": "This client has no registered users yet.",
+      "hmacSecret": "HMAC Secret",
+      "hmacSecretReveal": "Reveal secret",
+      "hmacSecretHide": "Hide secret",
+      "notConfigured": "Not configured",
+      "regenerateApiKey": "Regenerate API Key",
+      "regenerateConfirmTitle": "Regenerate API Key?",
+      "regenerateConfirmMessage": "This will permanently invalidate the current API key. Any integration using it will stop working immediately. This action cannot be undone.",
+      "regenerateConfirm": "Regenerate",
+      "regenerateCancel": "Cancel",
+      "regenerateSuccess": "New API Key generated",
+      "regenerateError": "Failed to regenerate API key. Please try again."
     }
   },
   "users": {

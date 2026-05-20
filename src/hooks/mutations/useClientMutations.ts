@@ -3,9 +3,10 @@ import {
   createClient,
   updateClient,
   deleteClient,
+  regenerateApiKey,
 } from "@/services/clients.service";
 import { CLIENT_QUERY_KEYS } from "@/hooks/queries/useClients";
-import type { Client, CreateClientInput, CreateClientResponse, UpdateClientInput } from "@/types/client.types";
+import type { Client, CreateClientInput, CreateClientResponse, RegenerateApiKeyResponse, UpdateClientInput } from "@/types/client.types";
 
 // ─── Create ───────────────────────────────────────────────────────────────────
 
@@ -48,6 +49,20 @@ export function useDeleteClient(): UseMutationResult<void, Error, string> {
     mutationFn: (id: string) => deleteClient(id),
     onSuccess: (): void => {
       void queryClient.invalidateQueries({ queryKey: CLIENT_QUERY_KEYS.all });
+    },
+  });
+}
+
+// ─── Regenerate API key ───────────────────────────────────────────────────────
+
+export function useRegenerateApiKey(): UseMutationResult<RegenerateApiKeyResponse, Error, string> {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (clientId: string) => regenerateApiKey(clientId),
+    onSuccess: (_data, clientId): void => {
+      void queryClient.invalidateQueries({ queryKey: CLIENT_QUERY_KEYS.all });
+      void queryClient.invalidateQueries({ queryKey: CLIENT_QUERY_KEYS.detail(clientId) });
     },
   });
 }

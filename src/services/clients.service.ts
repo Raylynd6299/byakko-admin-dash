@@ -4,6 +4,7 @@ import type {
   CreateClientInput,
   UpdateClientInput,
   CreateClientResponse,
+  RegenerateApiKeyResponse,
 } from "@/types/client.types";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -20,6 +21,10 @@ interface RawClient {
 
 interface RawCreateClientResponse {
   client:  RawClient;
+  api_key: string;
+}
+
+interface RawRegenerateApiKeyResponse {
   api_key: string;
 }
 
@@ -72,4 +77,11 @@ export async function updateClient(
 
 export async function deleteClient(id: string): Promise<void> {
   await httpClient.delete(`/clients/${id}`);
+}
+
+export async function regenerateApiKey(clientId: string): Promise<RegenerateApiKeyResponse> {
+  const { data } = await httpClient.post<RawRegenerateApiKeyResponse>(
+    `/clients/${clientId}/regenerate-api-key`
+  );
+  return { apiKey: data.api_key };
 }
