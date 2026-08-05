@@ -220,6 +220,13 @@
     "noPermissions": "Sin permisos",
     "createFirst": "Crea un permiso para definir acciones para usuarios.",
     "uncategorized": "Sin categoría",
+    "icon": "Ícono",
+    "iconPickerTitle": "Elegí un ícono",
+    "iconSearchPlaceholder": "Buscar íconos\u2026",
+    "iconNoResults": "Ningún ícono coincide con tu búsqueda.",
+    "iconNone": "Ninguno",
+    "iconClear": "Limpiar",
+    "iconShowMore": "Mostrar {{count}} más",
     "searchPlaceholder": "Buscar por categoría o acción...",
     "search": {
       "noResultsTitle": "Sin permisos coincidentes",
