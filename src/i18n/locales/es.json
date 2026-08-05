@@ -200,7 +200,8 @@
       "parent": "Categoría Padre",
       "none": "Ninguna (categoría raíz)",
       "parentHint": "Opcional. Se creará como categoría raíz si no se selecciona.",
-      "createButton": "Crear Categoría"
+      "createButton": "Crear Categoría",
+      "slugConflict": "Ya existe una categoría con ese slug."
     },
     "actions": {
       "edit": "Editar",

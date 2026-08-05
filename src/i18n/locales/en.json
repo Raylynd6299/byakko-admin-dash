@@ -200,7 +200,8 @@
       "parent": "Parent Category",
       "none": "None (root category)",
       "parentHint": "Optional. Create as a root category if not selected.",
-      "createButton": "Create Category"
+      "createButton": "Create Category",
+      "slugConflict": "A category with that slug already exists."
     },
     "actions": {
       "edit": "Edit",
