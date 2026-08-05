@@ -10,7 +10,15 @@ export const createPermissionSchema = z.object({
     .min(1, "Action is required")
     .max(100, "Action must be 100 chars or less")
     .regex(/^[a-z0-9:_-]+$/, "Action must be lowercase alphanumeric with : _ -"),
-  description: z.string().max(255, "Description must be 255 chars or less").optional(),
+  description: z.string().max(500, "Description must be 500 chars or less").optional(),
 });
 
 export type CreatePermissionFormValues = z.infer<typeof createPermissionSchema>;
+
+// ─── Edit Permission ──────────────────────────────────────────────────────────
+
+export const editPermissionSchema = z.object({
+  description: z.string().max(500, "Description must be 500 chars or less").optional(),
+});
+
+export type EditPermissionFormValues = z.infer<typeof editPermissionSchema>;

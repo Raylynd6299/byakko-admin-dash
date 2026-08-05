@@ -1,10 +1,15 @@
 import { type ReactElement, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Trash2 } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 import { Button, BUTTON_VARIANT } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/common/confirm-dialog";
-import { useDeletePermission } from "@/hooks/mutations/usePermissionMutations";
+import { PermissionEditDialog } from "@/components/permissions/components/permission-edit-dialog";
+import {
+  useDeletePermission,
+  useUpdatePermission,
+} from "@/hooks/mutations/usePermissionMutations";
 import type { Permission } from "@/types/permission.types";
+import type { EditPermissionFormValues } from "@/schemas/permission.schema";
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 
@@ -17,13 +22,39 @@ interface PermissionActionsProps {
 export function PermissionActions({ permission }: PermissionActionsProps): ReactElement {
   const { t } = useTranslation();
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
+  const [editOpen, setEditOpen] = useState<boolean>(false);
+  const [editError, setEditError] = useState<string | undefined>(undefined);
 
   const deleteMutation = useDeletePermission();
+  const updateMutation = useUpdatePermission();
 
   const handleDelete = (): void => {
     deleteMutation.mutate(
       { id: permission.id, clientId: permission.clientId },
       { onSuccess: () => setDeleteOpen(false) }
+    );
+  };
+
+  const handleOpenEdit = (): void => {
+    setEditError(undefined);
+    setEditOpen(true);
+  };
+
+  const handleEditSubmit = (values: EditPermissionFormValues): void => {
+    setEditError(undefined);
+    updateMutation.mutate(
+      {
+        id:       permission.id,
+        clientId: permission.clientId,
+        input:    { description: values.description || null },
+      },
+      {
+        // Close only on success. On failure the dialog stays open,
+        // shows the error, and keeps the admin's typed text.
+        onSuccess: () => setEditOpen(false),
+        onError:   (err) =>
+          setEditError(err instanceof Error ? err.message : t("permissions.edit.error")),
+      }
     );
   };
 
@@ -36,6 +67,15 @@ export function PermissionActions({ permission }: PermissionActionsProps): React
         <Button
           variant={BUTTON_VARIANT.GHOST}
           size="sm"
+          onClick={handleOpenEdit}
+          aria-label={t("permissions.actions.edit")}
+          title={t("permissions.actions.edit")}
+        >
+          <Pencil size={13} strokeWidth={1.5} />
+        </Button>
+        <Button
+          variant={BUTTON_VARIANT.GHOST}
+          size="sm"
           onClick={() => setDeleteOpen(true)}
           aria-label={t("permissions.actions.delete")}
           title={t("permissions.actions.delete")}
@@ -44,6 +84,15 @@ export function PermissionActions({ permission }: PermissionActionsProps): React
           <Trash2 size={13} strokeWidth={1.5} />
         </Button>
       </div>
+
+      <PermissionEditDialog
+        open={editOpen}
+        onClose={() => setEditOpen(false)}
+        permission={permission}
+        onSubmit={handleEditSubmit}
+        isLoading={updateMutation.isPending}
+        error={editError}
+      />
 
       <ConfirmDialog
         open={deleteOpen}

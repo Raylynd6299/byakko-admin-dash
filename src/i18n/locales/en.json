@@ -238,6 +238,11 @@
       "delete": "Delete",
       "deleteTitle": "Delete Permission",
       "deleteConfirm": "This will permanently delete the permission and revoke access for all users who had it. This action cannot be undone."
+    },
+    "edit": {
+      "title": "Edit Permission",
+      "description": "Update the description for {{action}}",
+      "error": "Failed to save. Please try again."
     }
   },
   "relationConditions": {

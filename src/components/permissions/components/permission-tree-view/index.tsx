@@ -325,7 +325,7 @@ export function PermissionTreeView({
     >
       {/* Table header */}
       <div
-        className="grid grid-cols-[1fr_2fr_3rem] border-b px-4 py-2"
+        className="grid grid-cols-[1fr_2fr_4.5rem] border-b px-4 py-2"
         style={{
           borderColor:     "var(--border-subtle)",
           backgroundColor: "var(--surface-2)",

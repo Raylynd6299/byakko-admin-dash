@@ -238,6 +238,11 @@
       "delete": "Eliminar",
       "deleteTitle": "Eliminar Permiso",
       "deleteConfirm": "Esto eliminará permanentemente el permiso y revocará el acceso de todos los usuarios que lo tenían. Esta acción no se puede deshacer."
+    },
+    "edit": {
+      "title": "Editar Permiso",
+      "description": "Actualiza la descripción de {{action}}",
+      "error": "No se pudo guardar. Por favor, intentá de nuevo."
     }
   },
   "relationConditions": {
