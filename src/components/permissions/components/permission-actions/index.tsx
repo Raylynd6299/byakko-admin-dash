@@ -46,7 +46,7 @@ export function PermissionActions({ permission }: PermissionActionsProps): React
       {
         id:       permission.id,
         clientId: permission.clientId,
-        input:    { description: values.description || null },
+        input:    { description: values.description || null, icon: values.icon ?? null },
       },
       {
         // Close only on success. On failure the dialog stays open,

@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { IconPicker } from "@/components/ui/icon-picker";
 import { editPermissionSchema, type EditPermissionFormValues } from "@/schemas/permission.schema";
 import type { Permission } from "@/types/permission.types";
 
@@ -37,19 +38,23 @@ export function PermissionEditDialog({
   const {
     register,
     handleSubmit,
+    setValue,
+    watch,
     reset,
     formState: { errors },
   } = useForm<EditPermissionFormValues>({
     resolver: zodResolver(editPermissionSchema),
-    defaultValues: { description: permission.description ?? "" },
+    defaultValues: { description: permission.description ?? "", icon: permission.icon ?? null },
   });
 
-  // Reset to the current permission's description each time the dialog
-  // opens for a (possibly different) permission. A failed save must NOT
-  // discard the admin's typed text, so this only runs on open, not on
-  // every keystroke or re-render.
+  const iconValue = watch("icon");
+
+  // Reset to the current permission's description/icon each time the
+  // dialog opens for a (possibly different) permission. A failed save
+  // must NOT discard the admin's typed text, so this only runs on open,
+  // not on every keystroke or re-render.
   useEffect(() => {
-    if (open) reset({ description: permission.description ?? "" });
+    if (open) reset({ description: permission.description ?? "", icon: permission.icon ?? null });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, permission.id]);
 
@@ -92,6 +97,23 @@ export function PermissionEditDialog({
           disabled={isLoading}
           {...register("description")}
         />
+
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs font-medium" style={{ color: "var(--text-secondary)" }}>
+            {t("permissions.icon")}
+          </label>
+          <IconPicker
+            value={iconValue ?? null}
+            onChange={(icon): void => setValue("icon", icon)}
+            disabled={isLoading}
+            aria-label={t("permissions.icon")}
+          />
+          {errors.icon && (
+            <p className="text-xs" style={{ color: "var(--danger-fg)" }}>
+              {errors.icon.message}
+            </p>
+          )}
+        </div>
 
         {error && (
           <p className="text-xs" style={{ color: "var(--danger-fg)" }}>

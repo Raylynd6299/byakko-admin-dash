@@ -6,6 +6,7 @@ import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, type SelectOption } from "@/components/ui/select";
+import { IconPicker } from "@/components/ui/icon-picker";
 import { createPermissionSchema, type CreatePermissionFormValues } from "@/schemas/permission.schema";
 import type { Client } from "@/types/client.types";
 import type { Category } from "@/types/category.types";
@@ -132,6 +133,7 @@ export function PermissionForm({
 
   const clientIdValue   = watch("clientId");
   const categoryIdValue = watch("categoryId");
+  const iconValue       = watch("icon");
 
   // Reset form when dialog closes
   useEffect(() => {
@@ -207,6 +209,23 @@ export function PermissionForm({
           disabled={isLoading}
           {...register("description")}
         />
+
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs font-medium" style={{ color: "var(--text-secondary)" }}>
+            {t("permissions.icon")}
+          </label>
+          <IconPicker
+            value={iconValue ?? null}
+            onChange={(icon): void => setValue("icon", icon ?? undefined)}
+            disabled={isLoading}
+            aria-label={t("permissions.icon")}
+          />
+          {errors.icon && (
+            <p className="text-xs" style={{ color: "var(--danger-fg)" }}>
+              {errors.icon.message}
+            </p>
+          )}
+        </div>
       </form>
     </Dialog>
   );
