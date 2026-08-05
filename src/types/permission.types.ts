@@ -16,4 +16,5 @@ export interface CreatePermissionInput {
 
 export interface UpdatePermissionInput {
   description?: string | null;
+  position?: { afterPermissionId: string | null };
 }

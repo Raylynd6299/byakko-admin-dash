@@ -54,7 +54,12 @@ export async function updatePermission(
 ): Promise<Permission> {
   const { data } = await httpClient.patch<RawPermission>(
     `/permissions/${id}`,
-    { description: input.description },
+    {
+      description: input.description,
+      position:     input.position
+        ? { after_permission_id: input.position.afterPermissionId }
+        : undefined,
+    },
     { params: { client_id: clientId } }
   );
   return toPermission(data);
