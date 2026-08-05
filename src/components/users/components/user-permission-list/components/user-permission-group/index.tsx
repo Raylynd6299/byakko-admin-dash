@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { ChevronRight, Folder, Shield, ShieldOff } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { Button, BUTTON_VARIANT } from "@/components/ui/button";
+import { PermissionIcon } from "@/components/ui/permission-icon";
 import { RevokedBadge } from "@/components/users/components/user-permission-list/components/revoked-badge";
 import type { GroupedUserPermissions } from "@/components/users/components/user-permission-list/helpers";
 import type { UserPermission } from "@/types/user.types";
@@ -78,6 +79,11 @@ export function UserPermissionGroup({
               )}
               style={{ borderColor: "var(--border-subtle)" }}
             >
+              {/* Icon — decorative, mirrors the Permisos row (A10) so a
+                  granted permission never looks iconless next to its
+                  catalog entry. */}
+              <PermissionIcon name={perm.icon} size={14} />
+
               {/* Action */}
               <span
                 className="min-w-0 flex-1 font-mono text-sm"
