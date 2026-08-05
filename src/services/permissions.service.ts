@@ -1,5 +1,9 @@
 import { httpClient } from "./http-client";
-import type { Permission, CreatePermissionInput } from "@/types/permission.types";
+import type {
+  Permission,
+  CreatePermissionInput,
+  UpdatePermissionInput,
+} from "@/types/permission.types";
 
 interface RawPermission {
   id:           string;
@@ -7,6 +11,7 @@ interface RawPermission {
   category_id:  string;
   action:       string;
   description?: string;
+  sort_order:   number;
 }
 
 function toPermission(raw: RawPermission): Permission {
@@ -16,6 +21,7 @@ function toPermission(raw: RawPermission): Permission {
     categoryId:  raw.category_id,
     action:      raw.action,
     description: raw.description,
+    sortOrder:   raw.sort_order,
   };
 }
 
@@ -36,7 +42,21 @@ export async function createPermission(input: CreatePermissionInput): Promise<Pe
     client_id:   input.clientId,
     category_id: input.categoryId,
     action:      input.action,
+    description: input.description,
   });
+  return toPermission(data);
+}
+
+export async function updatePermission(
+  id: string,
+  clientId: string,
+  input: UpdatePermissionInput
+): Promise<Permission> {
+  const { data } = await httpClient.patch<RawPermission>(
+    `/permissions/${id}`,
+    { description: input.description },
+    { params: { client_id: clientId } }
+  );
   return toPermission(data);
 }
 

@@ -47,9 +47,9 @@ function buildGroups(permissions: Permission[], categories: Category[]): Permiss
   const groups: PermissionGroup[] = [];
   for (const [categoryId, perms] of grouped.entries()) {
     const cat = categoryId ? (categoryMap.get(categoryId) ?? null) : null;
-    // Sort permissions within group alphabetically
-    const sorted = [...perms].sort((a, b) => a.action.localeCompare(b.action));
-    groups.push({ category: cat, permissions: sorted });
+    // Permissions within a group keep the server's persisted order
+    // (sort_order, action) — never re-sorted here.
+    groups.push({ category: cat, permissions: perms });
   }
 
   return groups.sort((a, b) => {
