@@ -156,6 +156,8 @@
       "revoked": "Revoked",
       "noPermissions": "No permissions",
       "noPermissionsGranted": "This user has no permissions granted yet.",
+      "searchPermissions": "Search by action or category...",
+      "hideRevoked": "Hide revoked",
       "revoke": "Revoke",
       "revokePermission": "Revoke Permission?",
       "revokeConfirm": "This will remove access for this permission. The user will no longer be able to perform this action.",

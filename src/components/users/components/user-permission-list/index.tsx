@@ -1,46 +1,82 @@
-import { type ReactElement, useState } from "react";
+import { type ReactElement, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Shield, ShieldOff } from "lucide-react";
-import { DataTable, type Column } from "@/components/common/data-table";
+import { Search, Shield, SearchX } from "lucide-react";
+import { EmptyState } from "@/components/common/empty-state";
+import { ErrorState } from "@/components/common/error-state";
 import { ConfirmDialog } from "@/components/common/confirm-dialog";
-import { Button, BUTTON_VARIANT } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useRevokePermission } from "@/hooks/mutations/useUserMutations";
-import { RevokedBadge } from "./components/revoked-badge";
+import { UserPermissionGroup } from "./components/user-permission-group";
+import { buildUserGroups, filterUserPermissions } from "./helpers";
 import type { UserPermission } from "@/types/user.types";
-import type { Permission } from "@/types/permission.types";
-import type { Category } from "@/types/category.types";
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 
 interface UserPermissionListProps {
-  permissions:     UserPermission[];
-  permissionMap:   Map<string, Permission>;
-  categoryMap:     Map<string, Category>;
-  userId:          string;
-  clientId:        string;
-  isLoading?:      boolean;
-  isError?:        boolean;
-  onRetry?:        () => void;
-  onGrantClick?:   () => void;
+  permissions:           UserPermission[];
+  userId:                string;
+  clientId:              string;
+  isLoading?:            boolean;
+  isError?:              boolean;
+  onRetry?:              () => void;
+  onGrantClick?:         () => void;
+  // Reports the post-filter (hide-revoked + search) row count upward, so
+  // the page-level header count and this list's group headers derive from
+  // the SAME computation and can never disagree (design §12).
+  onVisibleCountChange?: (count: number) => void;
+}
+
+// ─── Loading skeleton ─────────────────────────────────────────────────────────
+
+function ListSkeleton(): ReactElement {
+  return (
+    <div className="space-y-3 p-3">
+      {[1, 2].map((i) => (
+        <div key={i} className="space-y-1">
+          <div
+            className="h-7 w-48 animate-pulse rounded-md"
+            style={{ backgroundColor: "var(--surface-3)" }}
+          />
+          <div className="ml-6 space-y-1">
+            {[1, 2].map((j) => (
+              <div
+                key={j}
+                className="h-8 animate-pulse rounded"
+                style={{ backgroundColor: "var(--surface-2)" }}
+              />
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export function UserPermissionList({
   permissions,
-  permissionMap,
-  categoryMap,
   userId,
   clientId,
   isLoading,
   isError,
   onRetry,
   onGrantClick,
+  onVisibleCountChange,
 }: UserPermissionListProps): ReactElement {
   const { t } = useTranslation();
   const [revokeId, setRevokeId] = useState<string | null>(null);
-  const permissionToRevoke = permissions.find((p) => p.id === revokeId);
+  const [query, setQuery] = useState<string>("");
+  // ON by default (design §12) — an admin auditing access should see the
+  // active set first, not the full grant/revoke history.
+  const [hideRevoked, setHideRevoked] = useState<boolean>(true);
 
+  // Collapse state lifted here, same shape as the Permisos screen (§7):
+  // COLLAPSED ids, `new Set(prev)` on toggle, derived expansion.
+  const [collapsedIds, setCollapsedIds] = useState<ReadonlySet<string>>(new Set());
+
+  const permissionToRevoke = permissions.find((p) => p.id === revokeId);
   const revokeMutation = useRevokePermission();
 
   const handleRevoke = (): void => {
@@ -49,123 +85,150 @@ export function UserPermissionList({
       {
         userId,
         input: {
-          permissionId:     permissionToRevoke.permissionId,
+          permissionId: permissionToRevoke.permissionId,
           clientId,
-          byApi:            false,
+          byApi:         false,
         },
       },
       { onSuccess: () => setRevokeId(null) }
     );
   };
 
-  // ─── Columns ──────────────────────────────────────────────────────────────
+  const handleToggleCollapse = (categoryId: string): void => {
+    setCollapsedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(categoryId)) {
+        next.delete(categoryId);
+      } else {
+        next.add(categoryId);
+      }
+      return next;
+    });
+  };
 
-  const columns: Column<UserPermission>[] = [
-    {
-      key:    "category",
-      header: t("nav.categories"),
-      width:  "w-40",
-      render: (perm) => {
-        const detail   = permissionMap.get(perm.permissionId);
-        const category = detail ? categoryMap.get(detail.categoryId) : undefined;
-        return (
-          <span className="text-sm" style={{ color: "var(--text-secondary)" }}>
-            {category?.name ?? "—"}
-          </span>
-        );
-      },
-    },
-    {
-      key:    "permission",
-      header: t("users.detail.permission"),
-      render: (perm) => {
-        const detail = permissionMap.get(perm.permissionId);
-        return (
-          <div className="flex flex-col gap-0.5">
-            <span className="font-medium text-sm" style={{ color: "var(--text-primary)" }}>
-              {detail?.action ?? perm.permissionId}
-            </span>
-            {detail?.description && (
-              <span className="text-xs" style={{ color: "var(--text-muted)" }}>
-                {detail.description}
-              </span>
-            )}
-          </div>
-        );
-      },
-    },
-    {
-      key:    "granted",
-      header: t("users.detail.granted"),
-      width:  "w-32",
-      render: (perm) => (
-        <span className="text-xs" style={{ color: "var(--text-muted)" }}>
-          {new Date(perm.grantedAt).toLocaleDateString()}
-        </span>
-      ),
-    },
-    {
-      key:    "status",
-      header: t("users.detail.status"),
-      width:  "w-28",
-      render: (perm) =>
-        perm.revokedAt ? (
-          <RevokedBadge date={perm.revokedAt} />
-        ) : (
-          <span
-            className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-xs"
-            style={{
-              backgroundColor: "var(--success-bg)",
-              color:           "var(--success-fg)",
-            }}
-          >
-            <Shield size={10} strokeWidth={1.5} />
-            {t("status.active")}
-          </span>
-        ),
-    },
-    {
-      key:    "actions",
-      header: "",
-      width:  "w-20",
-      render: (perm) =>
-        perm.revokedAt ? null : (
-          <div onClick={(e): void => e.stopPropagation()}>
-            <Button
-              variant={BUTTON_VARIANT.GHOST}
-              size="sm"
-              onClick={() => setRevokeId(perm.id)}
-              aria-label={t("users.detail.revoke")}
-              title={t("users.detail.revoke")}
-              style={{ color: "var(--danger-fg)" }}
-            >
-              <ShieldOff size={13} strokeWidth={1.5} />
-            </Button>
-          </div>
-        ),
-    },
-  ];
+  const isFiltering = Boolean(query);
+  const visibleRows = filterUserPermissions(permissions, { hideRevoked, query });
+  const groups = buildUserGroups(visibleRows);
+
+  // Reports the count upward whenever it changes. `visibleRows.length` (not
+  // the array itself) is the dependency — only the count matters to the
+  // caller, and this keeps the page header in sync with zero duplicated
+  // filtering logic on the page side.
+  useEffect(() => {
+    onVisibleCountChange?.(visibleRows.length);
+  }, [visibleRows.length, onVisibleCountChange]);
+
+  // ── Loading ───────────────────────────────────────────────────────────────
+  if (isLoading) {
+    return (
+      <div
+        className="overflow-hidden rounded-xl border"
+        style={{ borderColor: "var(--border-subtle)", backgroundColor: "var(--surface-1)" }}
+      >
+        <ListSkeleton />
+      </div>
+    );
+  }
+
+  // ── Error ─────────────────────────────────────────────────────────────────
+  if (isError) {
+    return (
+      <div
+        className="rounded-xl border"
+        style={{ borderColor: "var(--border-subtle)", backgroundColor: "var(--surface-1)" }}
+      >
+        <ErrorState onRetry={onRetry} />
+      </div>
+    );
+  }
+
+  // ── Empty (no grants at all) ─────────────────────────────────────────────
+  if (permissions.length === 0) {
+    return (
+      <div
+        className="rounded-xl border"
+        style={{ borderColor: "var(--border-subtle)", backgroundColor: "var(--surface-1)" }}
+      >
+        <EmptyState
+          icon={Shield}
+          title={t("users.detail.noPermissions")}
+          message={t("users.detail.noPermissionsGranted")}
+          action={
+            onGrantClick ? (
+              <Button size="sm" onClick={onGrantClick}>
+                {t("users.detail.grantPermission")}
+              </Button>
+            ) : undefined
+          }
+        />
+      </div>
+    );
+  }
 
   return (
     <>
-      <DataTable<UserPermission>
-        data={permissions}
-        columns={columns}
-        keyExtractor={(p) => p.id}
-        isLoading={isLoading}
-        isError={isError}
-        onRetry={onRetry}
-        emptyTitle={t("users.detail.noPermissions")}
-        emptyMessage={t("users.detail.noPermissionsGranted")}
-        emptyIcon={Shield}
-        emptyAction={
-          onGrantClick ? (
-            <Button size="sm" onClick={onGrantClick}>
-              {t("users.detail.grantPermission")}
-            </Button>
-          ) : undefined
-        }
-      />
+      <div
+        className="overflow-hidden rounded-xl border"
+        style={{ borderColor: "var(--border-subtle)", backgroundColor: "var(--surface-1)" }}
+      >
+        {/* Search + hide-revoked toggle */}
+        <div
+          className="flex flex-wrap items-center gap-3 border-b px-4 py-2.5"
+          style={{ borderColor: "var(--border-subtle)", backgroundColor: "var(--surface-2)" }}
+        >
+          <Input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={t("users.detail.searchPermissions")}
+            leftIcon={<Search size={13} />}
+            className="max-w-64 flex-1"
+            aria-label={t("users.detail.searchPermissions")}
+          />
+          <label
+            className="flex items-center gap-1.5 text-xs"
+            style={{ color: "var(--text-muted)" }}
+          >
+            <input
+              type="checkbox"
+              checked={hideRevoked}
+              onChange={(e) => setHideRevoked(e.target.checked)}
+            />
+            {t("users.detail.hideRevoked")}
+          </label>
+        </div>
+
+        {isFiltering && groups.length === 0 ? (
+          <EmptyState
+            icon={SearchX}
+            title={t("permissions.search.noResultsTitle")}
+            message={t("permissions.search.noResultsMessage", { query })}
+            action={
+              <Button variant="outline" size="sm" onClick={() => setQuery("")}>
+                {t("permissions.search.clear")}
+              </Button>
+            }
+          />
+        ) : (
+          <div className="p-2">
+            {groups.map((group) => {
+              // Matching groups auto-expand while filtering, derived —
+              // never written to collapse state — so the admin's collapse
+              // choice survives once the filter clears (§7/§12).
+              const isExpanded = isFiltering ? true : !collapsedIds.has(group.categoryId);
+              return (
+                <UserPermissionGroup
+                  key={group.categoryId}
+                  group={group}
+                  isExpanded={isExpanded}
+                  onToggle={() => handleToggleCollapse(group.categoryId)}
+                  onRevoke={(perm) => setRevokeId(perm.id)}
+                />
+              );
+            })}
+          </div>
+        )}
+      </div>
 
       {/* Revoke confirm */}
       <ConfirmDialog

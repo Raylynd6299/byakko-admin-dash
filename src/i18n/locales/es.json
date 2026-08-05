@@ -156,6 +156,8 @@
       "revoked": "Revocado",
       "noPermissions": "Sin permisos",
       "noPermissionsGranted": "Este usuario no tiene permisos otorgados todavía.",
+      "searchPermissions": "Buscar por acción o categoría...",
+      "hideRevoked": "Ocultar revocados",
       "revoke": "Revocar",
       "revokePermission": "¿Revocar Permiso?",
       "revokeConfirm": "Esto removerá el acceso a este permiso. El usuario ya no podrá realizar esta acción.",

@@ -43,6 +43,14 @@ export interface UserPermission {
   permissionId: string;
   grantedAt: string;
   revokedAt?: string;
+  // Enriched fields (PR1) — every row resolves its own action and category,
+  // so the user-detail screen no longer needs the global catalog queries.
+  action: string;
+  icon?: string;
+  categoryId: string;
+  categoryName: string;
+  categorySlug: string;
+  categoryPath: string;
 }
 
 export interface GrantPermissionInput {
