@@ -1,7 +1,8 @@
-import { type ReactElement, useState } from "react";
+import { type ReactElement } from "react";
 import { useTranslation } from "react-i18next";
-import { ChevronRight, Shield, Folder, Plus } from "lucide-react";
+import { ChevronRight, Shield, Folder, Plus, SearchX } from "lucide-react";
 import { cn } from "@/lib/cn";
+import { matchesText } from "@/lib/text-search";
 import { EmptyState } from "@/components/common/empty-state";
 import { Button } from "@/components/ui/button";
 import { PermissionActions } from "@/components/permissions/components/permission-actions";
@@ -15,15 +16,21 @@ interface PermissionGroup {
   permissions: Permission[];
 }
 
+const UNCATEGORIZED_KEY = "__uncategorized__";
+
 // ─── Props ────────────────────────────────────────────────────────────────────
 
 interface PermissionTreeViewProps {
-  permissions: Permission[];
-  categories:  Category[];
-  isLoading:   boolean;
-  isError:     boolean;
-  onRetry:     () => void;
-  onCreateClick: () => void;
+  permissions:      Permission[];
+  categories:       Category[];
+  isLoading:        boolean;
+  isError:          boolean;
+  onRetry:          () => void;
+  onCreateClick:    () => void;
+  query:            string;
+  onClearQuery:     () => void;
+  collapsedIds:     ReadonlySet<string>;
+  onToggleCollapse: (categoryId: string) => void;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -59,15 +66,42 @@ function buildGroups(permissions: Permission[], categories: Category[]): Permiss
   });
 }
 
+/**
+ * Filters groups by the Permisos search predicate. A group stays visible
+ * when its own category name/path matches, OR when at least one of its
+ * permissions matches on action/description. When it matches only through
+ * its permissions, only those permissions are listed; when it matches on
+ * its own name/path, all of its permissions are listed. This never
+ * re-sorts — persisted order survives filtering.
+ */
+function filterGroups(groups: PermissionGroup[], query: string): PermissionGroup[] {
+  const filtered: PermissionGroup[] = [];
+  for (const group of groups) {
+    const categoryMatches = matchesText(query, group.category?.name, group.category?.path);
+    const visiblePermissions = categoryMatches
+      ? group.permissions
+      : group.permissions.filter((p) => matchesText(query, p.action, p.description));
+
+    if (categoryMatches || visiblePermissions.length > 0) {
+      filtered.push({ category: group.category, permissions: visiblePermissions });
+    }
+  }
+  return filtered;
+}
+
+function groupKey(category: Category | null): string {
+  return category?.id ?? UNCATEGORIZED_KEY;
+}
+
 // ─── Category Group ───────────────────────────────────────────────────────────
 
 interface CategoryGroupProps {
-  group:            PermissionGroup;
-  defaultExpanded?: boolean;
+  group:      PermissionGroup;
+  isExpanded: boolean;
+  onToggle:   () => void;
 }
 
-function CategoryGroup({ group, defaultExpanded = true }: CategoryGroupProps): ReactElement {
-  const [expanded, setExpanded] = useState<boolean>(defaultExpanded);
+function CategoryGroup({ group, isExpanded, onToggle }: CategoryGroupProps): ReactElement {
   const { t } = useTranslation();
 
   const categoryLabel = group.category
@@ -79,7 +113,7 @@ function CategoryGroup({ group, defaultExpanded = true }: CategoryGroupProps): R
       {/* Category header row */}
       <button
         type="button"
-        onClick={() => setExpanded((v) => !v)}
+        onClick={onToggle}
         className={cn(
           "flex w-full items-center gap-2 rounded-lg px-3 py-2",
           "text-left text-xs font-semibold uppercase tracking-wider",
@@ -91,7 +125,7 @@ function CategoryGroup({ group, defaultExpanded = true }: CategoryGroupProps): R
         <ChevronRight
           size={13}
           strokeWidth={2}
-          className={cn("shrink-0 transition-transform duration-150", expanded && "rotate-90")}
+          className={cn("shrink-0 transition-transform duration-150", isExpanded && "rotate-90")}
         />
         <Folder size={13} strokeWidth={1.5} className="shrink-0" />
         <span className="truncate">{categoryLabel}</span>
@@ -107,7 +141,7 @@ function CategoryGroup({ group, defaultExpanded = true }: CategoryGroupProps): R
       </button>
 
       {/* Permission rows */}
-      {expanded && (
+      {isExpanded && (
         <div
           className="ml-4 border-l"
           style={{ borderColor: "var(--border-subtle)" }}
@@ -185,6 +219,10 @@ export function PermissionTreeView({
   isError,
   onRetry,
   onCreateClick,
+  query,
+  onClearQuery,
+  collapsedIds,
+  onToggleCollapse,
 }: PermissionTreeViewProps): ReactElement {
   const { t } = useTranslation();
 
@@ -250,7 +288,32 @@ export function PermissionTreeView({
     );
   }
 
-  const groups = buildGroups(permissions, categories);
+  const isFiltering = Boolean(query);
+  const allGroups = buildGroups(permissions, categories);
+  const groups = isFiltering ? filterGroups(allGroups, query) : allGroups;
+
+  if (isFiltering && groups.length === 0) {
+    return (
+      <div
+        className="rounded-xl border"
+        style={{
+          borderColor:     "var(--border-subtle)",
+          backgroundColor: "var(--surface-1)",
+        }}
+      >
+        <EmptyState
+          icon={SearchX}
+          title={t("permissions.search.noResultsTitle")}
+          message={t("permissions.search.noResultsMessage", { query })}
+          action={
+            <Button variant="outline" size="sm" onClick={onClearQuery}>
+              {t("permissions.search.clear")}
+            </Button>
+          }
+        />
+      </div>
+    );
+  }
 
   return (
     <div
@@ -285,13 +348,21 @@ export function PermissionTreeView({
 
       {/* Groups */}
       <div className="p-2">
-        {groups.map((group) => (
-          <CategoryGroup
-            key={group.category?.id ?? "__uncategorized__"}
-            group={group}
-            defaultExpanded
-          />
-        ))}
+        {groups.map((group) => {
+          const key = groupKey(group.category);
+          // Matching groups auto-expand while filtering, derived — never
+          // written to collapse state — so the admin's collapse choice
+          // survives once the filter clears.
+          const isExpanded = isFiltering ? true : !collapsedIds.has(key);
+          return (
+            <CategoryGroup
+              key={key}
+              group={group}
+              isExpanded={isExpanded}
+              onToggle={() => onToggleCollapse(key)}
+            />
+          );
+        })}
       </div>
     </div>
   );

@@ -217,6 +217,12 @@
     "noPermissions": "No permissions",
     "createFirst": "Create a permission to define actions for users.",
     "uncategorized": "Uncategorized",
+    "searchPlaceholder": "Search by category or action...",
+    "search": {
+      "noResultsTitle": "No matching permissions",
+      "noResultsMessage": "Nothing matches \"{{query}}\".",
+      "clear": "Clear search"
+    },
     "create": {
       "title": "New Permission",
       "description": "Create a new permission for a client and category.",

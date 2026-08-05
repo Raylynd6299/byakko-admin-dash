@@ -217,6 +217,12 @@
     "noPermissions": "Sin permisos",
     "createFirst": "Crea un permiso para definir acciones para usuarios.",
     "uncategorized": "Sin categoría",
+    "searchPlaceholder": "Buscar por categoría o acción...",
+    "search": {
+      "noResultsTitle": "Sin permisos coincidentes",
+      "noResultsMessage": "Nada coincide con \"{{query}}\".",
+      "clear": "Limpiar búsqueda"
+    },
     "create": {
       "title": "Nuevo Permiso",
       "description": "Crea un nuevo permiso para un cliente y categoría.",
