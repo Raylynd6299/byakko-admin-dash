@@ -17,7 +17,13 @@ import type { CreatePermissionFormValues } from "@/schemas/permission.schema";
 export function PermissionList(): ReactElement {
   const { t } = useTranslation();
   const [clientIdFilter, setClientIdFilter] = useState<string>("");
+  const [search, setSearch] = useState<string>("");
   const [createOpen, setCreateOpen] = useState<boolean>(false);
+
+  // Collapse state lives here, lifted above the tree view (A5). Stores
+  // COLLAPSED ids so the default (empty set) is "everything expanded" —
+  // a category appearing after a refetch needs no bookkeeping entry.
+  const [collapsedIds, setCollapsedIds] = useState<ReadonlySet<string>>(new Set());
 
   const { data: clients = [] } = useClients();
   const { data: categories = [] } = useCategories();
@@ -40,6 +46,21 @@ export function PermissionList(): ReactElement {
     });
   };
 
+  const handleToggleCollapse = (categoryId: string): void => {
+    setCollapsedIds((prev) => {
+      // A fresh Set is MANDATORY — useState bails out on Object.is
+      // equality, so mutating `prev` in place and returning it would
+      // skip the re-render and the chevron would never move.
+      const next = new Set(prev);
+      if (next.has(categoryId)) {
+        next.delete(categoryId);
+      } else {
+        next.add(categoryId);
+      }
+      return next;
+    });
+  };
+
   return (
     <>
       <PageHeader
@@ -55,7 +76,9 @@ export function PermissionList(): ReactElement {
 
       <FilterBar
         clientId={clientIdFilter}
+        search={search}
         onClientChange={setClientIdFilter}
+        onSearchChange={setSearch}
         clients={clients.map((c) => ({ id: c.id, name: c.name }))}
       />
 
@@ -66,6 +89,10 @@ export function PermissionList(): ReactElement {
         isError={isError}
         onRetry={() => void refetch()}
         onCreateClick={() => setCreateOpen(true)}
+        query={search}
+        onClearQuery={() => setSearch("")}
+        collapsedIds={collapsedIds}
+        onToggleCollapse={handleToggleCollapse}
       />
 
       <PermissionForm

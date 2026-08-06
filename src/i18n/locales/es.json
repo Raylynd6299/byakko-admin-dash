@@ -156,6 +156,8 @@
       "revoked": "Revocado",
       "noPermissions": "Sin permisos",
       "noPermissionsGranted": "Este usuario no tiene permisos otorgados todavía.",
+      "searchPermissions": "Buscar por acción o categoría...",
+      "hideRevoked": "Ocultar revocados",
       "revoke": "Revocar",
       "revokePermission": "¿Revocar Permiso?",
       "revokeConfirm": "Esto removerá el acceso a este permiso. El usuario ya no podrá realizar esta acción.",
@@ -200,7 +202,8 @@
       "parent": "Categoría Padre",
       "none": "Ninguna (categoría raíz)",
       "parentHint": "Opcional. Se creará como categoría raíz si no se selecciona.",
-      "createButton": "Crear Categoría"
+      "createButton": "Crear Categoría",
+      "slugConflict": "Ya existe una categoría con ese slug."
     },
     "actions": {
       "edit": "Editar",
@@ -217,6 +220,19 @@
     "noPermissions": "Sin permisos",
     "createFirst": "Crea un permiso para definir acciones para usuarios.",
     "uncategorized": "Sin categoría",
+    "icon": "Ícono",
+    "iconPickerTitle": "Elegí un ícono",
+    "iconSearchPlaceholder": "Buscar íconos\u2026",
+    "iconNoResults": "Ningún ícono coincide con tu búsqueda.",
+    "iconNone": "Ninguno",
+    "iconClear": "Limpiar",
+    "iconShowMore": "Mostrar {{count}} más",
+    "searchPlaceholder": "Buscar por categoría o acción...",
+    "search": {
+      "noResultsTitle": "Sin permisos coincidentes",
+      "noResultsMessage": "Nada coincide con \"{{query}}\".",
+      "clear": "Limpiar búsqueda"
+    },
     "create": {
       "title": "Nuevo Permiso",
       "description": "Crea un nuevo permiso para un cliente y categoría.",
@@ -232,6 +248,26 @@
       "delete": "Eliminar",
       "deleteTitle": "Eliminar Permiso",
       "deleteConfirm": "Esto eliminará permanentemente el permiso y revocará el acceso de todos los usuarios que lo tenían. Esta acción no se puede deshacer."
+    },
+    "edit": {
+      "title": "Editar Permiso",
+      "description": "Actualiza la descripción de {{action}}",
+      "error": "No se pudo guardar. Por favor, intentá de nuevo."
+    },
+    "reorder": {
+      "dragHandle": "Arrastrar para reordenar {{action}}",
+      "moveUp": "Mover {{action}} hacia arriba",
+      "moveDown": "Mover {{action}} hacia abajo",
+      "disabledWhileFiltering": "Limpiar la búsqueda para reordenar",
+      "position": "posición {{index}} de {{total}}",
+      "dragStart": "Se tomó {{action}}.",
+      "dragOverNone": "{{action}} no está sobre una posición válida.",
+      "dragOver": "{{action}} está sobre {{position}} en {{category}}.",
+      "dragEndNone": "{{action}} se soltó fuera de una posición válida.",
+      "dragEnd": "{{action}} se movió a {{position}} en {{category}}.",
+      "dragCancel": "Se canceló el reordenamiento de {{action}}.",
+      "moveSuccess": "{{action}} reordenado.",
+      "moveError": "No se pudo reordenar {{action}}. Se revirtió al orden anterior."
     }
   },
   "relationConditions": {

@@ -35,8 +35,11 @@ export function useUserPermissions(
 ): UseQueryResult<UserPermission[], Error> {
   return useQuery({
     queryKey: USER_QUERY_KEYS.permissions(userId, clientId),
-    queryFn:  () => listUserPermissions(userId, clientId),
-    enabled:  Boolean(userId) && Boolean(clientId),
+    // Always requests include_revoked=true — hide-revoked is a browser-side
+    // toggle (user-permission-list), so toggling it is instant and never
+    // triggers a refetch.
+    queryFn:   () => listUserPermissions(userId, clientId, true),
+    enabled:   Boolean(userId) && Boolean(clientId),
     staleTime: 60_000,
   });
 }

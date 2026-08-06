@@ -30,10 +30,9 @@ export function CategoryList(): ReactElement {
     ? categories.filter((c) => c.clientId === clientIdFilter)
     : categories;
 
-  const handleCreate = (values: CreateCategoryFormValues): void => {
-    createMutation.mutate(values, {
-      onSuccess: () => setCreateOpen(false),
-    });
+  const handleCreate = async (values: CreateCategoryFormValues): Promise<void> => {
+    await createMutation.mutateAsync(values);
+    setCreateOpen(false);
   };
 
   const columns: Column<Category>[] = [

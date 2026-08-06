@@ -30,6 +30,12 @@ interface RawUserPermission {
   permission_id: string;
   granted_at:    string;
   revoked_at?:   string;
+  action:        string;
+  icon?:         string;
+  category_id:   string;
+  category_name: string;
+  category_slug: string;
+  category_path: string;
 }
 
 interface RawHistoryEntry {
@@ -63,6 +69,12 @@ function toUserPermission(raw: RawUserPermission): UserPermission {
     permissionId: raw.permission_id,
     grantedAt:    raw.granted_at,
     revokedAt:    raw.revoked_at,
+    action:       raw.action,
+    icon:         raw.icon,
+    categoryId:   raw.category_id,
+    categoryName: raw.category_name,
+    categorySlug: raw.category_slug,
+    categoryPath: raw.category_path,
   };
 }
 
@@ -126,11 +138,12 @@ export async function deleteUser(id: string, clientId: string): Promise<void> {
 
 export async function listUserPermissions(
   userId: string,
-  clientId: string
+  clientId: string,
+  includeRevoked: boolean
 ): Promise<UserPermission[]> {
   const { data } = await httpClient.get<RawUserPermission[]>(
     `/users/${userId}/permissions`,
-    { params: { client_id: clientId } }
+    { params: { client_id: clientId, include_revoked: includeRevoked } }
   );
   return data.map(toUserPermission);
 }

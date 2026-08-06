@@ -109,3 +109,20 @@ npm run lint      # ESLint
 - **Silent token renewal** — the Axios interceptor queues all 401 requests, refreshes the token once, then retries the queue
 - **Per-client JWT** — each client has its own HMAC secret; tokens are signed per-tenant on the backend
 - **i18n auto-detect** — language is read from `navigator.language` at startup, defaulting to ES
+
+## Operational Limits
+
+- **Permisos search is client-side.** The page loads the full permission and
+  category catalog for the selected client and filters it in the browser —
+  no backend release is required for search itself.
+- **Stated expiry:** this stays viable up to roughly **2,000 permissions for
+  a single client**, or a **~500 KB** catalog payload, whichever comes first.
+  Past that threshold, open a change to add server-side `search` +
+  pagination to `GET /permissions`.
+- **Why the follow-up is deferred, not built now:** server-side filtering
+  forces pagination semantics and cache-key changes — the exact bug class
+  just fixed on the Usuarios screen, where a Redis list cache key omitted
+  `search` and `status`, silently serving stale results depending on which
+  filter combination had populated the cache first. The client-side
+  approach for Permisos avoids that class of bug entirely, at the cost of
+  not scaling past the thresholds above.

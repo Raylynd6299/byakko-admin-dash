@@ -156,6 +156,8 @@
       "revoked": "Revoked",
       "noPermissions": "No permissions",
       "noPermissionsGranted": "This user has no permissions granted yet.",
+      "searchPermissions": "Search by action or category...",
+      "hideRevoked": "Hide revoked",
       "revoke": "Revoke",
       "revokePermission": "Revoke Permission?",
       "revokeConfirm": "This will remove access for this permission. The user will no longer be able to perform this action.",
@@ -200,7 +202,8 @@
       "parent": "Parent Category",
       "none": "None (root category)",
       "parentHint": "Optional. Create as a root category if not selected.",
-      "createButton": "Create Category"
+      "createButton": "Create Category",
+      "slugConflict": "A category with that slug already exists."
     },
     "actions": {
       "edit": "Edit",
@@ -217,6 +220,19 @@
     "noPermissions": "No permissions",
     "createFirst": "Create a permission to define actions for users.",
     "uncategorized": "Uncategorized",
+    "icon": "Icon",
+    "iconPickerTitle": "Choose an icon",
+    "iconSearchPlaceholder": "Search icons\u2026",
+    "iconNoResults": "No icons match your search.",
+    "iconNone": "None",
+    "iconClear": "Clear",
+    "iconShowMore": "Show {{count}} more",
+    "searchPlaceholder": "Search by category or action...",
+    "search": {
+      "noResultsTitle": "No matching permissions",
+      "noResultsMessage": "Nothing matches \"{{query}}\".",
+      "clear": "Clear search"
+    },
     "create": {
       "title": "New Permission",
       "description": "Create a new permission for a client and category.",
@@ -232,6 +248,26 @@
       "delete": "Delete",
       "deleteTitle": "Delete Permission",
       "deleteConfirm": "This will permanently delete the permission and revoke access for all users who had it. This action cannot be undone."
+    },
+    "edit": {
+      "title": "Edit Permission",
+      "description": "Update the description for {{action}}",
+      "error": "Failed to save. Please try again."
+    },
+    "reorder": {
+      "dragHandle": "Drag to reorder {{action}}",
+      "moveUp": "Move {{action}} up",
+      "moveDown": "Move {{action}} down",
+      "disabledWhileFiltering": "Clear the search to reorder",
+      "position": "position {{index}} of {{total}}",
+      "dragStart": "Picked up {{action}}.",
+      "dragOverNone": "{{action}} is not over a droppable position.",
+      "dragOver": "{{action}} is over {{position}} in {{category}}.",
+      "dragEndNone": "{{action}} was dropped outside a droppable position.",
+      "dragEnd": "{{action}} moved to {{position}} in {{category}}.",
+      "dragCancel": "Reordering {{action}} was cancelled.",
+      "moveSuccess": "{{action}} reordered.",
+      "moveError": "Failed to reorder {{action}}. Reverted to the previous order."
     }
   },
   "relationConditions": {
