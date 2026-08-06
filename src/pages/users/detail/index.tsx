@@ -78,6 +78,11 @@ export function UserDetailPage(): ReactElement {
     [permissions]
   );
 
+  // Post-filter (hide-revoked + search) permission count, reported up from
+  // UserPermissionList so this header's count and its group headers derive
+  // from the SAME computation and can never disagree (design §12).
+  const [visibleCount, setVisibleCount] = useState<number>(0);
+
   // Grant dialog state
   const [grantOpen, setGrantOpen] = useState<boolean>(false);
 
@@ -203,7 +208,7 @@ export function UserDetailPage(): ReactElement {
                 color:           "var(--text-muted)",
               }}
             >
-              {permissions.filter((p) => !p.revokedAt).length}
+              {visibleCount}
             </span>
           )}
         </div>
@@ -230,14 +235,13 @@ export function UserDetailPage(): ReactElement {
 
       <UserPermissionList
         permissions={permissions}
-        permissionMap={permissionMap}
-        categoryMap={categoryMap}
         userId={id}
         clientId={clientId}
         isLoading={permLoading}
         isError={permError}
         onRetry={() => void refetchPerms()}
         onGrantClick={() => setGrantOpen(true)}
+        onVisibleCountChange={setVisibleCount}
       />
 
       {/* History section */}
