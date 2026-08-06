@@ -220,6 +220,13 @@
     "noPermissions": "No permissions",
     "createFirst": "Create a permission to define actions for users.",
     "uncategorized": "Uncategorized",
+    "icon": "Icon",
+    "iconPickerTitle": "Choose an icon",
+    "iconSearchPlaceholder": "Search icons\u2026",
+    "iconNoResults": "No icons match your search.",
+    "iconNone": "None",
+    "iconClear": "Clear",
+    "iconShowMore": "Show {{count}} more",
     "searchPlaceholder": "Search by category or action...",
     "search": {
       "noResultsTitle": "No matching permissions",

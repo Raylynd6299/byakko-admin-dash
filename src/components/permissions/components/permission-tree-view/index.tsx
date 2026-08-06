@@ -23,6 +23,7 @@ import { matchesText } from "@/lib/text-search";
 import { resolveAnchor } from "@/lib/reorder";
 import { EmptyState } from "@/components/common/empty-state";
 import { Button } from "@/components/ui/button";
+import { PermissionIcon } from "@/components/ui/permission-icon";
 import { PermissionActions } from "@/components/permissions/components/permission-actions";
 import { useReorderPermission } from "@/hooks/mutations/usePermissionMutations";
 import type { Permission } from "@/types/permission.types";
@@ -209,6 +210,11 @@ function PermissionRow({
           <ArrowDown size={11} strokeWidth={2} />
         </button>
       </div>
+
+      {/* Icon — decorative only. It never wires pointer/drag listeners, so
+          it cannot steal the 5px PointerSensor activation from the drag
+          handle above; the action text remains the row's accessible name. */}
+      <PermissionIcon name={permission.icon} size={14} />
 
       {/* Action */}
       <span
